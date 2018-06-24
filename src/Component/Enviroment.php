@@ -2,6 +2,8 @@
 namespace SwooleTool\Component;
 
 //server 相关的一些环境处理
+use SwooleTool\Config\ConfigUtil;
+
 class Enviroment {
 
     public static function init() {
@@ -13,6 +15,11 @@ class Enviroment {
         self::setErrorHandler();
 
         //入口文件配置检测
+        $index_file = ConfigUtil::getInstance()->getConf(SysConst::INDEX_FILE);
+        if (!$index_file || !is_file($index_file)) {
+            die("INDEX_FILE not exists");
+        }
+
     }
 
     public static function systemDirInit(): void {

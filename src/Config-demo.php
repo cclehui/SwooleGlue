@@ -20,7 +20,7 @@ return [
     'ERROR_HANDLER' => null,
     'SHUTDOWN_FUNCTION' => null,
     'LOGGER_WRITER' => null,
-    'INDEX_FILE' => null,
+    'INDEX_FILE' => "index.php",
 
     'DEBUG'=>true,
     'TEMP_DIR'=>null,//若不配置，则默认框架初始化
