@@ -1,0 +1,18 @@
+{
+    "name": "cclehui/SwooleTool",
+    "authors": [
+        {
+            "name": "cclehui",
+            "email": "762414242@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "eaglewu/swoole-ide-helper": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "SwooleTool\\": "src/"
+        }
+    }
+}
