@@ -7,6 +7,7 @@ namespace SwooleTool;
  */
 
 use SwooleTool\AbstractInterface\Singleton;
+use SwooleTool\Component\Swoole\SwooleServer;
 use SwooleTool\Component\SysConst;
 
 class ServerManager {
@@ -248,7 +249,6 @@ LOGO;
     function serverStart($options) {
         $this->showLogo();
         $conf = ConfigUtil::getInstance();
-        $inst = Core::getInstance()->initialize();
         $version = $conf->getConf(SysConst::VERSION);
         echo "\n\e[31mSwooleTool\e[0m framework \e[34mVersion {$version}\e[0m\n\n";
 
@@ -306,7 +306,9 @@ LOGO;
         showTag('debug enable', $conf->getConf('DEBUG') ? 'true' : 'false');
         showTag('swoole version', phpversion('swoole'));
         showTag('php version', phpversion());
-        $inst->run();
+
+        //启动server
+        SwooleServer::getInstance()->start();
     }
 
     function serverStop($options) {

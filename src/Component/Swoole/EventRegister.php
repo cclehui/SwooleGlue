@@ -1,12 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2017/12/4
- * Time: 下午2:45
- */
 
-namespace EasySwoole\Core\Swoole;
+namespace SwooleTool\Component\Swoole;
 
 use EasySwoole\Core\Component\Event;
 

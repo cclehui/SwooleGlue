@@ -4,6 +4,7 @@ namespace SwooleTool\Component\Swoole;
 
 
 use SwooleTool\Component\Enviroment;
+use SwooleTool\Component\Invoker;
 
 class SwooleServer {
 
@@ -109,7 +110,6 @@ class SwooleServer {
         //创建默认的事件注册器
         $register = new EventRegister();
         $this->finalHook($register);
-        EasySwooleEvent::mainServerCreate($this, $register);
         $events = $register->all();
         foreach ($events as $event => $callback) {
             $this->mainServer->on($event, function () use ($callback) {
@@ -181,9 +181,9 @@ class SwooleServer {
                 cli_set_process_title($name);
             }
         });
-        EventHelper::registerDefaultOnTask($register);
-        EventHelper::registerDefaultOnFinish($register);
-        EventHelper::registerDefaultOnPipeMessage($register);
+//        EventHelper::registerDefaultOnTask($register);
+//        EventHelper::registerDefaultOnFinish($register);
+//        EventHelper::registerDefaultOnPipeMessage($register);
         $conf = Config::getInstance()->getConf("MAIN_SERVER");
         if ($conf['SERVER_TYPE'] == self::TYPE_WEB_SERVER || $conf['SERVER_TYPE'] == self::TYPE_WEB_SOCKET_SERVER) {
             if (!$register->get($register::onRequest)) {
