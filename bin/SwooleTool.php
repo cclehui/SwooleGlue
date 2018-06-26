@@ -1,7 +1,7 @@
 <?php
 
 
-define('EASYSWOOLE_ROOT', realpath(getcwd()));
+define('SWOOLESERVER_ROOT', realpath(getcwd()));
 
 foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php'] as $file) {
     if (file_exists($file)) {
@@ -16,4 +16,4 @@ $server_manager = \SwooleTool\ServerManager::getInstance();
 $server_manager->envCheck();
 
 //sever管理
-$server_manager->commandHandler();
+$server_manager->run();

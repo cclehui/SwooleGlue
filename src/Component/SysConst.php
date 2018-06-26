@@ -6,13 +6,14 @@ namespace SwooleTool\Component;
 class SysConst {
     const VERSION = 'VERSION';
 
-    const INDEX_FILE = 'INDEX_FILE'; //入口文件
-
     const LOGGER_WRITER = 'LOGGER_WRITER';
 
     const ERROR_HANDLER = 'ERROR_HANDLER';
     const SHUTDOWN_FUNCTION = 'SHUTDOWN_FUNCTION';
     const TRIGGER_HANDLER = 'TRIGGER_HANDLER';
+
+    const ROOT_INDEX_FILE = 'ROOT_INDEX_FILE';
+    const HTTP_HANDLER = 'HTTP_HANDLER';
 
     const HTTP_CONTROLLER_MAX_DEPTH = 'CONTROLLER_MAX_DEPTH';
     const HTTP_EXCEPTION_HANDLER = 'HTTP_EXCEPTION_HANDLER';

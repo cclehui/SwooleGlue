@@ -5,6 +5,8 @@ namespace SwooleTool\Component\Swoole;
 
 use SwooleTool\Component\Enviroment;
 use SwooleTool\Component\Invoker;
+use SwooleTool\Component\Config\ConfigUtil;
+use SwooleTool\Component\Pool\PoolManager;
 
 class SwooleServer {
 
@@ -79,7 +81,7 @@ class SwooleServer {
     }
 
     private function createMainServer(): \swoole_server {
-        $conf = Config::getInstance()->getConf("MAIN_SERVER");
+        $conf = ConfigUtil::getInstance()->getConf("MAIN_SERVER");
         $runModel = $conf['RUN_MODEL'];
         $host = $conf['HOST'];
         $port = $conf['PORT'];
@@ -170,8 +172,8 @@ class SwooleServer {
         PoolManager::getInstance();
         $register->add($register::onWorkerStart, function (\swoole_server $server, int $workerId) {
             PoolManager::getInstance()->__workerStartHook($workerId);
-            $workerNum = Config::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
-            $name = Config::getInstance()->getConf('SERVER_NAME');
+            $workerNum = ConfigUtil::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
+            $name = ConfigUtil::getInstance()->getConf('SERVER_NAME');
             if (PHP_OS != 'Darwin') {
                 if ($workerId <= ($workerNum - 1)) {
                     $name = "{$name}_Worker_" . $workerId;
@@ -184,7 +186,7 @@ class SwooleServer {
 //        EventHelper::registerDefaultOnTask($register);
 //        EventHelper::registerDefaultOnFinish($register);
 //        EventHelper::registerDefaultOnPipeMessage($register);
-        $conf = Config::getInstance()->getConf("MAIN_SERVER");
+        $conf = ConfigUtil::getInstance()->getConf("MAIN_SERVER");
         if ($conf['SERVER_TYPE'] == self::TYPE_WEB_SERVER || $conf['SERVER_TYPE'] == self::TYPE_WEB_SOCKET_SERVER) {
             if (!$register->get($register::onRequest)) {
                 EventHelper::registerDefaultOnRequest($register);

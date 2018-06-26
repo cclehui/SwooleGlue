@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\Config;
+namespace SwooleTool\Component\Config;
 
 use SwooleTool\AbstractInterface\Singleton;
 use SwooleTool\Component\Spl\SplArray;

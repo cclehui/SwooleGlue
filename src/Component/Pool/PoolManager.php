@@ -2,11 +2,10 @@
 
 namespace SwooleTool\Component\Pool;
 
-use EasySwoole\Config;
-use EasySwoole\Core\AbstractInterface\Singleton;
-use EasySwoole\Core\Component\Pool\AbstractInterface\Pool;
-use EasySwoole\Core\Component\Trigger;
-use EasySwoole\Core\Swoole\Memory\TableManager;
+use SwooleTool\Component\Config\ConfigUtil;
+use SwooleTool\AbstractInterface\Singleton;
+use SwooleTool\Component\Trigger;
+use SwooleTool\Component\Swoole\TableManager;
 use Swoole\Table;
 
 class PoolManager {
@@ -24,7 +23,7 @@ class PoolManager {
         TableManager::getInstance()->add('__PoolManager', ['createNum' => ['type' => Table::TYPE_INT, 'size' => 3]], 8192);
         $this->poolTable = TableManager::getInstance()->get('__PoolManager');
 
-        $conf = Config::getInstance()->getConf('POOL_MANAGER');
+        $conf = ConfigUtil::getInstance()->getConf('POOL_MANAGER');
         if (is_array($conf)) {
             foreach ($conf as $class => $item) {
                 $this->registerPool($class, $item['min'], $item['max'], $item['type']);
@@ -59,7 +58,7 @@ class PoolManager {
      * 为自定义进程预留
      */
     function __workerStartHook($workerId) {
-        $workerNum = Config::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
+        $workerNum = ConfigUtil::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
         foreach ($this->poolClassList as $class => $item) {
             if ($item['type'] === self::TYPE_ONLY_WORKER) {
                 if ($workerId > ($workerNum - 1)) {

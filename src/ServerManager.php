@@ -7,8 +7,10 @@ namespace SwooleTool;
  */
 
 use SwooleTool\AbstractInterface\Singleton;
+use SwooleTool\Component\FileUtil;
 use SwooleTool\Component\Swoole\SwooleServer;
 use SwooleTool\Component\SysConst;
+use SwooleTool\Component\Config\ConfigUtil;
 
 class ServerManager {
 
@@ -18,7 +20,7 @@ class ServerManager {
 
     }
 
-    public function commandHandler() {
+    public function run() {
         list($command, $options) = $this->commandParser();
 
         switch ($command) {
@@ -84,14 +86,14 @@ class ServerManager {
     }
 
     function installCheck() {
-        $lockFile = SwooleTool_ROOT . '/SwooleToolConfig.php';
+        $lockFile = SWOOLESERVER_ROOT . '/SwooleToolConfig.php';
         if (!is_file($lockFile)) {
             die("SwooleTool framework has not been installed, Please run\e[031m php SwooleTool.php install\e[0m\n");
         }
     }
 
     function initConf() {
-        $this->releaseResource(__DIR__ . '/../src/Resource/Config-demo.php', SwooleTool_ROOT . '/SwooleToolConfig.php');
+        $this->releaseResource(__DIR__ . '/Config-demo.php', SWOOLESERVER_ROOT . '/SwooleToolConfig.php');
     }
 
     protected function releaseResource($source, $destination) {
@@ -256,13 +258,13 @@ LOGO;
         if (isset($options['ip'])) {
             $conf->setConf("MAIN_SERVER.HOST", $options['ip']);
         }
-        showTag('listen address', $conf->getConf('MAIN_SERVER.HOST'));
+        $this->showTag('listen address', $conf->getConf('MAIN_SERVER.HOST'));
 
         // listen port set
         if (!empty($options['p'])) {
             $conf->setConf("MAIN_SERVER.PORT", $options['p']);
         }
-        showTag('listen port', $conf->getConf('MAIN_SERVER.PORT'));
+        $this->showTag('listen port', $conf->getConf('MAIN_SERVER.PORT'));
 
         // pid file set
         if (!empty($options['pid'])) {
@@ -274,13 +276,13 @@ LOGO;
         if (isset($options['workerNum'])) {
             $conf->setConf("MAIN_SERVER.SETTING.worker_num", $options['workerNum']);
         }
-        showTag('worker num', $conf->getConf('MAIN_SERVER.SETTING.worker_num'));
+        $this->showTag('worker num', $conf->getConf('MAIN_SERVER.SETTING.worker_num'));
 
         // task worker num set
         if (isset($options['taskWorkerNum'])) {
             $conf->setConf("MAIN_SERVER.SETTING.task_worker_num", $options['taskWorkerNum']);
         }
-        showTag('task worker num', $conf->getConf('MAIN_SERVER.SETTING.task_worker_num'));
+        $this->showTag('task worker num', $conf->getConf('MAIN_SERVER.SETTING.task_worker_num'));
 
         // run at user set
         $user = get_current_user();
@@ -288,7 +290,7 @@ LOGO;
             $conf->setConf("MAIN_SERVER.SETTING.user", $options['user']);
             $user = $conf->getConf('MAIN_SERVER.SETTING.user');
         }
-        showTag('run at user', $user);
+        $this->showTag('run at user', $user);
 
         // daemonize set
         $label = 'false';
@@ -296,16 +298,16 @@ LOGO;
             $conf->setConf("MAIN_SERVER.SETTING.daemonize", true);
             $label = 'true';
         }
-        showTag('daemonize', $label);
+        $this->showTag('daemonize', $label);
 
         // cpuAffinity set
         if (isset($options['cpuAffinity'])) {
             $conf->setConf("MAIN_SERVER.SETTING.open_cpu_affinity", true);
         }
 
-        showTag('debug enable', $conf->getConf('DEBUG') ? 'true' : 'false');
-        showTag('swoole version', phpversion('swoole'));
-        showTag('php version', phpversion());
+        $this->showTag('debug enable', $conf->getConf('DEBUG') ? 'true' : 'false');
+        $this->showTag('swoole version', phpversion('swoole'));
+        $this->showTag('php version', phpversion());
 
         //启动server
         SwooleServer::getInstance()->start();
@@ -313,8 +315,8 @@ LOGO;
 
     function serverStop($options) {
         Core::getInstance()->initialize();
-        $Conf = Conf::getInstance();
-        $pidFile = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
+        $conf = Conf::getInstance();
+        $pidFile = $conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (!empty($options['pid'])) {
             $pidFile = $options['pid'];
         }
@@ -360,8 +362,8 @@ LOGO;
 
     function serverReload($options) {
         Core::getInstance()->initialize();
-        $Conf = Conf::getInstance();
-        $pidFile = $Conf->getConf("MAIN_SERVER.SETTING.pid_file");
+        $conf = Conf::getInstance();
+        $pidFile = $conf->getConf("MAIN_SERVER.SETTING.pid_file");
         if (!empty($options['pid'])) {
             $pidFile = $options['pid'];
         }
@@ -394,46 +396,47 @@ LOGO;
     }
 
     function serverInstall($options) {
-        $lockFile = SwooleTool_ROOT . '/SwooleTool.install';
+        $lockFile = SWOOLESERVER_ROOT . '/SwooleTool.install';
         if (!is_file($lockFile)) {
-            initConf();
-            $Conf = Conf::getInstance();
-            $temPath = $Conf->getConf('TEMP_DIR');
-            $logPath = $Conf->getConf('LOG_DIR');
+            $this->initConf();
+            $conf = ConfigUtil::getInstance();
+            $temp_path = $conf->getConf('TEMP_DIR') ? : 'Temp';
+            $log_path = $conf->getConf('LOG_DIR') ? : 'Log';
 
-            if (is_dir($temPath)) {
+            if (is_dir($temp_path)) {
                 echo 'Temp Directory has already existed, do you want to replace it? [ Y / N (default) ] : ';
                 $answer = strtolower(trim(strtoupper(fgets(STDIN))));
                 if (in_array($answer, ['y', 'yes'])) {
-                    if (!File::createDir($temPath)) {
-                        die("create Temp Directory:{$temPath} fail");
+                    if (!FileUtil::createDir($temp_path)) {
+                        die("create Temp Directory:{$temp_path} fail");
                     }
                 }
             } else {
-                if (!File::createDir($temPath)) {
-                    die("create Temp Directory:{$temPath} fail");
+                if (!FileUtil::createDir($temp_path)) {
+                    die("create Temp Directory:{$temp_path} fail");
                 }
             }
 
-            if (is_dir($logPath)) {
+            if (is_dir($log_path)) {
                 echo 'Log Directory has already existed, do you want to replace it? [ Y / N (default) ] : ';
                 $answer = strtolower(trim(strtoupper(fgets(STDIN))));
                 if (in_array($answer, ['y', 'yes'])) {
-                    if (!File::createDir($logPath)) {
-                        die("create Temp Directory:{$logPath} fail");
+                    if (!FileUtil::createDir($log_path)) {
+                        die("create Temp Directory:{$log_path} fail");
                     }
                 }
             } else {
-                if (!File::createDir($logPath)) {
-                    die("create Temp Directory:{$logPath} fail");
+                if (!FileUtil::createDir($log_path)) {
+                    die("create Temp Directory:{$log_path} fail");
                 }
             }
             file_put_contents($lockFile, 'installed at ' . date('Y-m-d H:i:s'));
 
-            $realPath = getRelativelyPath(__DIR__ . '/SwooleTool', SwooleTool_ROOT);
-            file_put_contents(SwooleTool_ROOT . '/SwooleTool', "<?php\nrequire '$realPath';");
+//            $realPath = getRelativelyPath(__DIR__ . '/SwooleTool', SWOOLESERVER_ROOT);
+//            file_put_contents(SWOOLESERVER_ROOT . '/SwooleTool', "<?php\nrequire '$realPath';");
 
             echo "SwooleTool server install complete!\n";
+
         } else {
             die("SwooleTool framework has been installed\nPlease remove \e[31m{$lockFile}\e[0m and try again\n");
         }

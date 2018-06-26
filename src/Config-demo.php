@@ -17,10 +17,13 @@ return [
         ],
     ],
 
+    'HTTP_HANDLER' => '', //http处理的handler
+    'ROOT_INDEX_FILE' => '', //http处理的入口文件
+
     'ERROR_HANDLER' => null,
     'SHUTDOWN_FUNCTION' => null,
     'LOGGER_WRITER' => null,
-    'INDEX_FILE' => "index.php",
+    'ROOT_INDEX_FILE' => "index.php",
 
     'DEBUG'=>true,
     'TEMP_DIR'=>null,//若不配置，则默认框架初始化

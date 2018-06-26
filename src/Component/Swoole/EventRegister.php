@@ -2,11 +2,9 @@
 
 namespace SwooleTool\Component\Swoole;
 
-use EasySwoole\Core\Component\Event;
 
+class EventRegister extends Event {
 
-class EventRegister extends Event
-{
     const onStart = 'start';
     const onShutdown = 'shutdown';
     const onWorkerStart = 'workerStart';
@@ -30,28 +28,25 @@ class EventRegister extends Event
     const onMessage = 'message';
     const onOpen = 'open';
 
-    function __construct(array $allowKeys = null)
-    {
+    function __construct(array $allowKeys = null) {
         parent::__construct([
-            'start','shutdown','workerStart','workerStop','workerExit','timer',
-            'connect','receive','packet','close','bufferFull','bufferEmpty','task',
-            'finish','pipeMessage','workerError','managerStart','managerStop',
-            'request','handShake','message','open'
+            'start', 'shutdown', 'workerStart', 'workerStop', 'workerExit', 'timer',
+            'connect', 'receive', 'packet', 'close', 'bufferFull', 'bufferEmpty', 'task',
+            'finish', 'pipeMessage', 'workerError', 'managerStart', 'managerStop',
+            'request', 'handShake', 'message', 'open'
         ]);
     }
 
 
-    function add($key, $item): EventRegister
-    {
-        if(!parent::add($key,$item)){
+    function add($key, $item): EventRegister {
+        if (!parent::add($key, $item)) {
             trigger_error("event {$key} invalid or not allow");
         }
         return $this;
     }
 
-    function set($key, $item)
-    {
-        if(!parent::set($key,$item)){
+    function set($key, $item) {
+        if (!parent::set($key, $item)) {
             trigger_error("event {$key} invalid or not allow");
         }
         return $this;

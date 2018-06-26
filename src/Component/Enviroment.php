@@ -2,7 +2,7 @@
 namespace SwooleTool\Component;
 
 //server 相关的一些环境处理
-use SwooleTool\Config\ConfigUtil;
+use SwooleTool\Component\Config\ConfigUtil;
 
 class Enviroment {
 
@@ -14,11 +14,27 @@ class Enviroment {
 
         self::setErrorHandler();
 
-        //入口文件配置检测
-        $index_file = ConfigUtil::getInstance()->getConf(SysConst::INDEX_FILE);
-        if (!$index_file || !is_file($index_file)) {
-            die("INDEX_FILE not exists");
+        //入口文件检测， 绝对路径
+        $root_index_file = ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
+        if (!is_file($root_index_file)) {
+            die("root index file: $root_index_file not exists\n");
         }
+
+
+        //入口处理类
+        /*
+        $http_handler = ConfigUtil::getInstance()->getConf(SysConst::HTTP_HANDLER);
+        if (!$http_handler || !class_exists($http_handler)) {
+            die("HTTP HANDLER not exists");
+        }
+
+        $http_handler_obj = new $http_handler();
+        if (!$http_handler_obj instanceof \SwooleTool\Component\Swoole\Http\HttpHandler) {
+            die("HTTP HANDLER not instanceof \SwooleTool\Component\Swoole\Http\HttpHandler");
+        }
+
+        Di::getInstance()->set($http_handler, $http_handler_obj);
+        */
 
     }
 
