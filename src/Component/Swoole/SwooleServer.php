@@ -19,7 +19,8 @@ class SwooleServer {
     const TYPE_WEB_SERVER = 2;
     const TYPE_WEB_SOCKET_SERVER = 3;
 
-    protected function __construct() { }
+    protected function __construct() {
+    }
 
     public static function getInstance(): SwooleServer {
         if (!isset(self::$instance)) {
@@ -108,11 +109,14 @@ class SwooleServer {
                     Trigger::throwable(new \Exception("unknown server type :{$conf['SERVER_TYPE']}"));
                 }
         }
+
         $this->mainServer->set($setting);
+
         //创建默认的事件注册器
         $register = new EventRegister();
         $this->finalHook($register);
         $events = $register->all();
+
         foreach ($events as $event => $callback) {
             $this->mainServer->on($event, function () use ($callback) {
                 $ret = [];

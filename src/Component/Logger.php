@@ -2,9 +2,9 @@
 
 namespace SwooleTool\Component;
 
-use EasySwoole\Config;
-use EasySwoole\Core\AbstractInterface\LoggerWriterInterface;
-use EasySwoole\Core\AbstractInterface\Singleton;
+use SwooleTool\AbstractInterface\LoggerWriterInterface;
+use SwooleTool\AbstractInterface\Singleton;
+use SwooleTool\Component\Config\ConfigUtil;
 
 class Logger {
     use Singleton;
@@ -17,7 +17,7 @@ class Logger {
         if ($logger instanceof LoggerWriterInterface) {
             $this->loggerWriter = $logger;
         }
-        $this->defaultDir = Config::getInstance()->getConf('LOG_DIR');
+        $this->defaultDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
     }
 
     public function log(string $str, $category = 'default'): Logger {
