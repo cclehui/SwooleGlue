@@ -70,12 +70,14 @@ class Enviroment {
         if (!$conf) {
             return;
         }
+
         ini_set("display_errors", "On");
         error_reporting(E_ALL | E_STRICT);
+
         $userHandler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
         if (!is_callable($userHandler)) {
             $userHandler = function ($errorCode, $description, $file = null, $line = null) {
-                Trigger::error($description, $file, $line, $errorCode);
+                Trigger::error("trigger error:" . $description, $file, $line, $errorCode);
             };
         }
         set_error_handler($userHandler);
@@ -84,8 +86,8 @@ class Enviroment {
         if (!is_callable($func)) {
             $func = function () use ($conf) {
                 $error = error_get_last();
-                if (!empty($error)) {
-                    Trigger::error($error['message'], $error['file'], $error['line']);
+                if ($error) {
+                    Trigger::error("shutdown error:" . $error['message'], $error['file'], $error['line']);
                 }
             };
         }

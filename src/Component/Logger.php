@@ -32,7 +32,7 @@ class Logger {
         return $this;
     }
 
-    public function console(string $str, $saveLog = 1) {
+    public function console(string $str, $saveLog = false) {
         echo $str . "\n";
         if ($saveLog) {
             $this->log($str, 'console');

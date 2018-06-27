@@ -5,6 +5,9 @@ namespace SwooleTool\Component;
 use SwooleTool\AbstractInterface\TriggerInterface;
 
 class Trigger {
+
+
+
     public static function error($msg, $file = null, $line = null, $errorCode = E_USER_ERROR) {
         if ($file == null) {
             $bt = debug_backtrace();
@@ -16,9 +19,10 @@ class Trigger {
         if ($func instanceof TriggerInterface) {
             $func::error($msg, $file, $line, $errorCode);
         } else {
-            $debug = "Error at file[{$file}] line[{$line}] message:[{$msg}]";
-            Logger::getInstance()->log($debug, 'debug');
-            Logger::getInstance()->console($debug, false);
+            $logStr = self::getErrorLevelStr($errorCode) . " at file[{$file}] line[{$line}] message:[{$msg}]";
+
+            Logger::getInstance()->log($logStr, 'debug');
+            Logger::getInstance()->console($logStr, false);
         }
     }
 
@@ -27,11 +31,28 @@ class Trigger {
         if ($func instanceof TriggerInterface) {
             $func::throwable($throwable);
         } else {
-            $debug = "Exception at file[{$throwable->getFile()}] line[{$throwable->getLine()}] message:[{$throwable->getMessage()}]";
-            Logger::getInstance()->log($debug, 'debug');
-            Logger::getInstance()->console($debug, false);
+            $logStr = "Exception at file[{$throwable->getFile()}] line[{$throwable->getLine()}] message:[{$throwable->getMessage()}]";
+
+            Logger::getInstance()->log($logStr, 'debug');
+            Logger::getInstance()->console($logStr, false);
         }
     }
 
+    protected static function getErrorLevelStr($errorCode) {
+
+        switch ($errorCode) {
+            case E_USER_ERROR:
+                return 'USER ERROR';
+
+            case E_USER_WARNING:
+                return 'USER WARNING';
+
+            case E_USER_NOTICE:
+                return 'USER NOTICE';
+
+            default:
+                return 'Unknown error';
+        }
+    }
 
 }
