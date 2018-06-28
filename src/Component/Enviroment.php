@@ -66,13 +66,6 @@ class Enviroment {
     }
 
     public static function setErrorHandler(): void {
-        $conf = ConfigUtil::getInstance()->getConf("DEBUG");
-        if (!$conf) {
-            return;
-        }
-
-        ini_set("display_errors", "On");
-        error_reporting(E_ALL | E_STRICT);
 
         $userHandler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
         if (!is_callable($userHandler)) {

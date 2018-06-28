@@ -16,11 +16,10 @@ class EventHelper {
     //默认的 http handler
     public static function registerDefaultOnRequest(EventRegister $register): void {
         $register->set($register::onRequest, function (Request $request, Response $response)  {
+
             ob_start();
 
             try {
-
-                echo "11111111111\n";
 
                 $http_handler = new HttpHandler($request, $response);
 

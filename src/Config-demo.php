@@ -22,8 +22,10 @@ return [
 
     'ERROR_HANDLER' => null,
     'SHUTDOWN_FUNCTION' => null,
-    'LOGGER_WRITER' => null,
     'ROOT_INDEX_FILE' => "index.php",
+
+
+    'LOG_LEVEL' => \Monolog\Logger::DEBUG,
 
     'DEBUG'=> true,
     'TEMP_DIR'=> null,//若不配置，则默认框架初始化

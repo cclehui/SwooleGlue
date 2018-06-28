@@ -6,8 +6,6 @@ use SwooleTool\AbstractInterface\TriggerInterface;
 
 class Trigger {
 
-
-
     public static function error($msg, $file = null, $line = null, $errorCode = E_USER_ERROR) {
         if ($file == null) {
             $bt = debug_backtrace();
@@ -19,7 +17,7 @@ class Trigger {
         if ($func instanceof TriggerInterface) {
             $func::error($msg, $file, $line, $errorCode);
         } else {
-            $logStr = self::getErrorLevelStr($errorCode) . " at file[{$file}] line[{$line}] message:[{$msg}]";
+            $logStr = self::getErrorLevelStr($errorCode) . ": $msg in {$file} on line {$line}";
 
             Logger::getInstance()->log($logStr, 'debug');
             Logger::getInstance()->console($logStr, false);
@@ -41,6 +39,18 @@ class Trigger {
     protected static function getErrorLevelStr($errorCode) {
 
         switch ($errorCode) {
+            case E_NOTICE:
+                return 'E_NOTICE';
+
+            case E_WARNING:
+                return 'E_WARNING';
+
+            case E_ERROR:
+                return 'E_ERROR';
+
+            case E_PARSE:
+                return 'E_PARSE';
+
             case E_USER_ERROR:
                 return 'USER ERROR';
 

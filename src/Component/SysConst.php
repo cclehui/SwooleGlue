@@ -6,8 +6,6 @@ namespace SwooleTool\Component;
 class SysConst {
     const VERSION = 'VERSION';
 
-    const LOGGER_WRITER = 'LOGGER_WRITER';
-
     const ERROR_HANDLER = 'ERROR_HANDLER';
     const SHUTDOWN_FUNCTION = 'SHUTDOWN_FUNCTION';
     const TRIGGER_HANDLER = 'TRIGGER_HANDLER';

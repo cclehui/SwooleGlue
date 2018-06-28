@@ -90,37 +90,32 @@ class SwooleServer {
         $sockType = $conf['SOCK_TYPE'];
         switch ($conf['SERVER_TYPE']) {
             case self::TYPE_SERVER:
-                {
-                    $this->mainServer = new \swoole_server($host, $port, $runModel, $sockType);
-                    break;
-                }
+                $this->mainServer = new \swoole_server($host, $port, $runModel, $sockType);
+                break;
             case self::TYPE_WEB_SERVER:
-                {
-                    $this->mainServer = new \swoole_http_server($host, $port, $runModel, $sockType);
-                    break;
-                }
+                $this->mainServer = new \swoole_http_server($host, $port, $runModel, $sockType);
+                break;
             case self::TYPE_WEB_SOCKET_SERVER:
-                {
-                    $this->mainServer = new \swoole_websocket_server($host, $port, $runModel, $sockType);
-                    break;
-                }
+                $this->mainServer = new \swoole_websocket_server($host, $port, $runModel, $sockType);
+                break;
             default:
-                {
-                    Trigger::throwable(new \Exception("unknown server type :{$conf['SERVER_TYPE']}"));
-                }
+                Trigger::throwable(new \Exception("unknown server type :{$conf['SERVER_TYPE']}"));
         }
 
         $this->mainServer->set($setting);
 
         //创建默认的事件注册器
         $register = new EventRegister();
-        $this->finalHook($register);
+
+        //注册时间处理函数
+        $register = $this->setEeventHandler($register);
         $events = $register->all();
 
         foreach ($events as $event => $callback) {
             $this->mainServer->on($event, function () use ($callback) {
                 $ret = [];
                 $args = func_get_args();
+
                 foreach ($callback as $item) {
                     array_push($ret, Invoker::callUserFuncArray($item, $args));
                 }
@@ -148,30 +143,8 @@ class SwooleServer {
         }
     }
 
-    public function coroutineId(): ?int {
-        if (class_exists('Swoole\Coroutine')) {
-            //进程错误或不在协程中的时候返回-1
-            $ret = Coroutine::getuid();
-            if ($ret >= 0) {
-                return $ret;
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    }
 
-    public function isCoroutine(): bool {
-        if ($this->coroutineId() !== null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    private function finalHook(EventRegister $register) {
+    private function setEeventHandler(EventRegister $register) {
         //实例化对象池管理
         PoolManager::getInstance();
         $register->add($register::onWorkerStart, function (\swoole_server $server, int $workerId) {
@@ -187,14 +160,18 @@ class SwooleServer {
                 cli_set_process_title($name);
             }
         });
+
 //        EventHelper::registerDefaultOnTask($register);
 //        EventHelper::registerDefaultOnFinish($register);
 //        EventHelper::registerDefaultOnPipeMessage($register);
         $conf = ConfigUtil::getInstance()->getConf("MAIN_SERVER");
-        if ($conf['SERVER_TYPE'] == self::TYPE_WEB_SERVER || $conf['SERVER_TYPE'] == self::TYPE_WEB_SOCKET_SERVER) {
+        if ($conf['SERVER_TYPE'] == self::TYPE_WEB_SERVER
+            || $conf['SERVER_TYPE'] == self::TYPE_WEB_SOCKET_SERVER) {
             if (!$register->get($register::onRequest)) {
                 EventHelper::registerDefaultOnRequest($register);
             }
         }
+
+        return $register;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace SwooleTool\Component;
 
+use Monolog\Handler\RotatingFileHandler;
 use SwooleTool\AbstractInterface\LoggerWriterInterface;
 use SwooleTool\AbstractInterface\Singleton;
 use SwooleTool\Component\Config\ConfigUtil;
@@ -10,50 +11,28 @@ class Logger {
     use Singleton;
 
     private $loggerWriter;
-    private $defaultDir;
 
     function __construct() {
-        $logger = Di::getInstance()->get(SysConst::LOGGER_WRITER);
-        if ($logger instanceof LoggerWriterInterface) {
-            $this->loggerWriter = $logger;
-        }
-        $this->defaultDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
+        $logDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
+
+        $this->loggerWriter = new \Monolog\Logger("swoole_glue_logger");
+        $this->loggerWriter->pushHandler(new RotatingFileHandler($logDir . "/debug.log"));
+
     }
 
-    public function log(string $str, $category = 'default'): Logger {
-        if ($this->loggerWriter instanceof LoggerWriterInterface) {
-            $this->loggerWriter->writeLog($str, $category, time());
-        } else {
-            $str = date("y-m-d H:i:s") . ":{$str}\n";
-            $filePrefix = $category . "_" . date('ym');
-            $filePath = $this->defaultDir . "/{$filePrefix}.log";
-            file_put_contents($filePath, $str, FILE_APPEND | LOCK_EX);
-        }
-        return $this;
-    }
+    public function debug($logStr) {
 
-    public function console(string $str, $saveLog = false) {
-        echo $str . "\n";
-        if ($saveLog) {
-            $this->log($str, 'console');
-        }
-    }
-
-    public function consoleWithTrace(string $str, $saveLog = 1) {
         $debug = $this->debugInfo();
         $debug = "file[{$debug['file']}] function[{$debug['function']}] line[{$debug['line']}]";
-        $str = "{$debug} message: [{$str}]";
-        echo $str . "\n";
-        if ($saveLog) {
-            $this->log($str, 'console');
-        }
+        $logStr = "{$debug} message: [{$logStr}]";
+
+        $this->loggerWriter->debug($logStr);
     }
 
-    public function logWithTrace(string $str, $category = 'default') {
-        $debug = $this->debugInfo();
-        $debug = "file[{$debug['file']}] function[{$debug['function']}] line[{$debug['line']}]";
-        $this->log("{$debug} message: [{$str}]", $category);
+    public function __call($name, $arguments) {
+        $this->loggerWriter->$name($arguments);
     }
+
 
     private function debugInfo() {
         $trace = debug_backtrace();
