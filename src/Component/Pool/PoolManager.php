@@ -4,7 +4,6 @@ namespace SwooleGlue\Component\Pool;
 
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\AbstractInterface\Singleton;
-use SwooleGlue\Component\Trigger;
 use SwooleGlue\Component\Swoole\TableManager;
 use Swoole\Table;
 
@@ -32,17 +31,14 @@ class PoolManager {
     }
 
     function registerPool(string $class, $minNum, $maxNum, $type = self::TYPE_ONLY_WORKER) {
-        try {
-            $ref = new \ReflectionClass($class);
-            if ($ref->isSubclassOf(Pool::class)) {
-                $this->poolClassList[$class] = ['min' => $minNum, 'max' => $maxNum, 'type' => $type];
-                return true;
-            } else {
-                Trigger::throwable(new \Exception($class . ' is not Pool class'));
-            }
-        } catch (\Throwable $throwable) {
-            Trigger::throwable($throwable);
+        $ref = new \ReflectionClass($class);
+        if ($ref->isSubclassOf(Pool::class)) {
+            $this->poolClassList[$class] = ['min' => $minNum, 'max' => $maxNum, 'type' => $type];
+            return true;
+        } else {
+            throw new \Exception($class . ' is not Pool class');
         }
+
         return false;
     }
 

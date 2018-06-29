@@ -2,6 +2,8 @@
 
 namespace SwooleGlue\Component\Swoole;
 
+use SwooleGlue\Component\Logger;
+
 class Event extends MultiContainer {
     function add($key, $item) {
         if (is_callable($item)) {
@@ -26,7 +28,7 @@ class Event extends MultiContainer {
                 try {
                     Invoker::callUserFunc($call, ...$args);
                 } catch (\Throwable $throwable) {
-                    Trigger::throwable($throwable);
+                    Logger::getInstance()->error($throwable->getMessage());
                 }
             }
         }

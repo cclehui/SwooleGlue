@@ -68,15 +68,14 @@ class Enviroment {
 
         $log_file = $log_dir . DIRECTORY_SEPARATOR;
         $log_file .= ConfigUtil::getInstance()->getConf('SWOOLE_LOG_FILE') ? : 'swoole.log';
-        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_dir);
+
+        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_file);
     }
 
     protected static function setErrorHandler(): void {
         $userHandler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
         if (!is_callable($userHandler)) {
             $userHandler = function ($errorCode, $description, $file = null, $line = null) {
-                Trigger::error("trigger error:" . $description, $file, $line, $errorCode);
-
                 $logStr = ErrorUtil::getErrorLevelStr($errorCode) . ": $description at {$file} line {$line}";
 
                 Logger::getInstance()->error($logStr, debug_backtrace());
