@@ -17,7 +17,7 @@ class HttpHandler{
         $_GET = $request->get;
         $_POST = $request->post;
         $_REQUEST = array_merge($_GET, $_POST);
-//        $_REQUEST->test();
+        $_REQUEST->test();
         $_SERVER = $request->server;
         $_COOKIE = $request->cookie;
 

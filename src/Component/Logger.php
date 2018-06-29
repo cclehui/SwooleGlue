@@ -13,8 +13,9 @@ class Logger extends \Monolog\Logger {
     function __construct() {
         $logDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
 
-        parent::__construct("swoole_glue_logger");
-        $this->pushHandler(new RotatingFileHandler($logDir . "/debug.log"));
+        parent::__construct("SWOOLE_SERVER_LOGGER");
+        $logLevel = ConfigUtil::getInstance()->getConf('LOG_LEVEL');
+        $this->pushHandler(new RotatingFileHandler($logDir . "/debug.log", $logLevel));
     }
 
     private function debugInfo() {

@@ -82,7 +82,7 @@ class Enviroment {
             };
         }
 
-        set_error_handler($userHandler);
+        set_error_handler($userHandler, E_ERROR);
     }
 
     protected static function registerShutdownFunc(): void {

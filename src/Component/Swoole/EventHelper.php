@@ -17,9 +17,10 @@ class EventHelper {
     public static function registerDefaultOnRequest(EventRegister $register): void {
         $register->set($register::onRequest, function (Request $request, Response $response)  {
 
-            ob_start();
+
 
             try {
+                ob_start();
 
                 $http_handler = new HttpHandler($request, $response);
 
@@ -50,10 +51,14 @@ class EventHelper {
 
             } catch (\Throwable $throwable) {
 
-                $result = ob_get_contents();
+                switch ($throwable->getCode()) {//优化
+                    case E_ERROR:
+                        Logger::getInstance()->error($throwable->getCode() . ", " . $throwable->getMessage() . ", " . $throwable->getTraceAsString());
+                        break;
+                    default:
+                        Logger::getInstance()->info($throwable->getCode() . ", " .$throwable->getMessage() . ", " . $throwable->getTraceAsString());
 
-                Logger::getInstance()->error($result);
-                ob_end_clean();
+                }
 
                 $handler = Di::getInstance()->get(SysConst::HTTP_EXCEPTION_HANDLER);
                 if ($handler instanceof ExceptionHandlerInterface) {
