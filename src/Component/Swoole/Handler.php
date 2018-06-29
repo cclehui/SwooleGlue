@@ -1,5 +1,5 @@
 <?php
-namespace SwooleTool\Component\Swoole;
+namespace SwooleGlue\Component\Swoole;
 
 
 abstract class Handler {

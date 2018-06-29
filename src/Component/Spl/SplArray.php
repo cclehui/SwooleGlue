@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\Component\Spl;
+namespace SwooleGlue\Component\Spl;
 
 class SplArray extends \ArrayObject
 {

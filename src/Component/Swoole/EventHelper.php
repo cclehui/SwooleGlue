@@ -1,15 +1,15 @@
 <?php
 
-namespace SwooleTool\Component\Swoole;
+namespace SwooleGlue\Component\Swoole;
 
 
 use Swoole\Http\Request;
 use Swoole\Http\Response;
-use SwooleTool\Component\Di;
-use SwooleTool\Component\Logger;
-use SwooleTool\Component\Swoole\Http\HttpHandler;
-use SwooleTool\Component\Swoole\Http\Status;
-use SwooleTool\Component\SysConst;
+use SwooleGlue\Component\Di;
+use SwooleGlue\Component\Logger;
+use SwooleGlue\Component\Swoole\Http\HttpHandler;
+use SwooleGlue\Component\Swoole\Http\Status;
+use SwooleGlue\Component\SysConst;
 
 class EventHelper {
 
@@ -52,7 +52,7 @@ class EventHelper {
 
                 $result = ob_get_contents();
 
-                Logger::getInstance()->console($result);
+                Logger::getInstance()->error($result);
                 ob_end_clean();
 
                 $handler = Di::getInstance()->get(SysConst::HTTP_EXCEPTION_HANDLER);

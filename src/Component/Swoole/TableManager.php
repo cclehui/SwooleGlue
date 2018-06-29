@@ -1,8 +1,8 @@
 <?php
 
-namespace SwooleTool\Component\Swoole;
+namespace SwooleGlue\Component\Swoole;
 
-use SwooleTool\AbstractInterface\Singleton;
+use SwooleGlue\AbstractInterface\Singleton;
 use Swoole\Table;
 
 class TableManager {

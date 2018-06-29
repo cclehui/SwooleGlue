@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\Component\Swoole\Http;
+namespace SwooleGlue\Component\Swoole\Http;
 
 
 interface ExceptionHandlerInterface {

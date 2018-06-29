@@ -1,11 +1,11 @@
 <?php
 
-namespace SwooleTool\Component\Pool;
+namespace SwooleGlue\Component\Pool;
 
-use SwooleTool\Component\Config\ConfigUtil;
-use SwooleTool\AbstractInterface\Singleton;
-use SwooleTool\Component\Trigger;
-use SwooleTool\Component\Swoole\TableManager;
+use SwooleGlue\Component\Config\ConfigUtil;
+use SwooleGlue\AbstractInterface\Singleton;
+use SwooleGlue\Component\Trigger;
+use SwooleGlue\Component\Swoole\TableManager;
 use Swoole\Table;
 
 class PoolManager {

@@ -1,16 +1,16 @@
 <?php
 
-namespace SwooleTool;
+namespace SwooleGlue;
 
 /*
  *  server 的启动、停止、重启、reload管理
  */
 
-use SwooleTool\AbstractInterface\Singleton;
-use SwooleTool\Component\FileUtil;
-use SwooleTool\Component\Swoole\SwooleServer;
-use SwooleTool\Component\SysConst;
-use SwooleTool\Component\Config\ConfigUtil;
+use SwooleGlue\AbstractInterface\Singleton;
+use SwooleGlue\Component\FileUtil;
+use SwooleGlue\Component\Swoole\SwooleServer;
+use SwooleGlue\Component\SysConst;
+use SwooleGlue\Component\Config\ConfigUtil;
 
 class ServerManager {
 
@@ -86,14 +86,14 @@ class ServerManager {
     }
 
     function installCheck() {
-        $lockFile = SWOOLESERVER_ROOT . '/SwooleToolConfig.php';
+        $lockFile = SWOOLESERVER_ROOT . '/SwooleGlueConfig.php';
         if (!is_file($lockFile)) {
-            die("SwooleTool framework has not been installed, Please run\e[031m php SwooleTool.php install\e[0m\n");
+            die("SwooleGlue framework has not been installed, Please run\e[031m php SwooleGlue.php install\e[0m\n");
         }
     }
 
     function initConf() {
-        $this->releaseResource(__DIR__ . '/Config-demo.php', SWOOLESERVER_ROOT . '/SwooleToolConfig.php');
+        $this->releaseResource(__DIR__ . '/Config-demo.php', SWOOLESERVER_ROOT . '/SwooleGlueConfig.php');
     }
 
     protected function releaseResource($source, $destination) {
@@ -124,7 +124,7 @@ class ServerManager {
             case 'start':
                 echo <<<HELP_START
 \e[33m操作:\e[0m
-\e[31m  SwooleTool start\e[0m
+\e[31m  SwooleGlue start\e[0m
 \e[33m简介:\e[0m
 \e[36m  执行本命令可以启动框架 可选的操作参数如下\e[0m
 \e[33m参数:\e[0m
@@ -142,7 +142,7 @@ HELP_START;
             case 'stop':
                 echo <<<HELP_STOP
 \e[33m操作:\e[0m
-\e[31m  SwooleTool stop\e[0m
+\e[31m  SwooleGlue stop\e[0m
 \e[33m简介:\e[0m
 \e[36m  执行本命令可以停止框架 可选的操作参数如下\e[0m
 \e[33m参数:\e[0m
@@ -153,7 +153,7 @@ HELP_STOP;
             case 'reload':
                 echo <<<HELP_STOP
 \e[33m操作:\e[0m
-\e[31m  SwooleTool reload\e[0m
+\e[31m  SwooleGlue reload\e[0m
 \e[33m简介:\e[0m
 \e[36m  执行本命令可以重启所有Worker 可选的操作参数如下\e[0m
 \e[33m参数:\e[0m
@@ -164,9 +164,9 @@ HELP_STOP;
             case 'install':
                 echo <<<HELP_INSTALL
 \e[33m操作:\e[0m
-\e[31m  SwooleTool install\e[0m
+\e[31m  SwooleGlue install\e[0m
 \e[33m简介:\e[0m
-\e[36m  安装并初始化SwooleTool相关目录\e[0m
+\e[36m  安装并初始化SwooleGlue相关目录\e[0m
 \e[33m参数:\e[0m
 \e[32m  本操作没有相关的参数\e[0m\n
 HELP_INSTALL;
@@ -174,7 +174,7 @@ HELP_INSTALL;
             case 'restart':
                 echo <<<HELP_INSTALL
 \e[33m操作:\e[0m
-\e[31m  SwooleTool restart\e[0m
+\e[31m  SwooleGlue restart\e[0m
 \e[33m简介:\e[0m
 \e[36m  停止并重新启动服务\e[0m
 \e[33m参数:\e[0m
@@ -187,10 +187,10 @@ HELP_INSTALL;
                 echo <<<DEFAULTHELP
 
 \e[33m使用:\e[0m
-  SwooleTool [操作] [选项]
+  SwooleGlue [操作] [选项]
 
 \e[33m操作:\e[0m
-\e[32m  install \e[0m      初始化SwooleTool
+\e[32m  install \e[0m      初始化SwooleGlue
 \e[32m  start \e[0m        启动服务
 \e[32m  stop \e[0m         停止服务
 \e[32m  reload \e[0m       重载服务
@@ -198,7 +198,7 @@ HELP_INSTALL;
 
 \e[32m  help \e[0m         查看命令的帮助信息\n
 \e[31m有关某个操作的详细信息 请使用\e[0m help \e[31m命令查看 \e[0m
-\e[31m如查看\e[0m start \e[31m操作的详细信息 请输入\e[0m SwooleTool help --start\n\n
+\e[31m如查看\e[0m start \e[31m操作的详细信息 请输入\e[0m SwooleGlue help --start\n\n
 DEFAULTHELP;
         }
     }
@@ -252,7 +252,7 @@ LOGO;
         $this->showLogo();
         $conf = ConfigUtil::getInstance();
         $version = $conf->getConf(SysConst::VERSION);
-        echo "\n\e[31mSwooleTool\e[0m framework \e[34mVersion {$version}\e[0m\n\n";
+        echo "\n\e[31mSwooleGlue\e[0m framework \e[34mVersion {$version}\e[0m\n\n";
 
         // listen host set
         if (isset($options['ip'])) {
@@ -396,7 +396,7 @@ LOGO;
     }
 
     function serverInstall($options) {
-        $lockFile = SWOOLESERVER_ROOT . '/SwooleTool.install';
+        $lockFile = SWOOLESERVER_ROOT . '/SwooleGlue.install';
         if (!is_file($lockFile)) {
             $this->initConf();
             $conf = ConfigUtil::getInstance();
@@ -432,13 +432,13 @@ LOGO;
             }
             file_put_contents($lockFile, 'installed at ' . date('Y-m-d H:i:s'));
 
-//            $realPath = getRelativelyPath(__DIR__ . '/SwooleTool', SWOOLESERVER_ROOT);
-//            file_put_contents(SWOOLESERVER_ROOT . '/SwooleTool', "<?php\nrequire '$realPath';");
+//            $realPath = getRelativelyPath(__DIR__ . '/SwooleGlue', SWOOLESERVER_ROOT);
+//            file_put_contents(SWOOLESERVER_ROOT . '/SwooleGlue', "<?php\nrequire '$realPath';");
 
-            echo "SwooleTool server install complete!\n";
+            echo "SwooleGlue server install complete!\n";
 
         } else {
-            die("SwooleTool framework has been installed\nPlease remove \e[31m{$lockFile}\e[0m and try again\n");
+            die("SwooleGlue framework has been installed\nPlease remove \e[31m{$lockFile}\e[0m and try again\n");
         }
     }
 }

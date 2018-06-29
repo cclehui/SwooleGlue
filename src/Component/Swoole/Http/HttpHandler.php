@@ -1,9 +1,9 @@
 <?php
 
-namespace SwooleTool\Component\Swoole\Http;
+namespace SwooleGlue\Component\Swoole\Http;
 
 
-use SwooleTool\Component\SysConst;
+use SwooleGlue\Component\SysConst;
 
 class HttpHandler{
 
@@ -30,7 +30,7 @@ class HttpHandler{
     public function doService() {
         print_r($this->request->header);
 
-        include \SwooleTool\Component\Config\ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
+        include \SwooleGlue\Component\Config\ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
 
     }
 

@@ -1,5 +1,5 @@
 {
-    "name": "cclehui/SwooleTool",
+    "name": "cclehui/SwooleGlue",
     "authors": [
         {
             "name": "cclehui",
@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SwooleTool\\": "src/"
+            "SwooleGlue\\": "src/"
         }
     }
 }

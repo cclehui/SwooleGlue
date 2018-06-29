@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\AbstractInterface;
+namespace SwooleGlue\AbstractInterface;
 
 
 interface TriggerInterface {

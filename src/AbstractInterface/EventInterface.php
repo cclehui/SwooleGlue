@@ -1,5 +1,5 @@
 <?php
-namespace SwooleTool\AbstractInterface;
+namespace SwooleGlue\AbstractInterface;
 
 
 use EasySwoole\Core\Http\Request;

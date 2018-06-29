@@ -1,9 +1,9 @@
 <?php
 
-namespace SwooleTool\Component;
+namespace SwooleGlue\Component;
 
 
-use SwooleTool\AbstractInterface\Singleton;
+use SwooleGlue\AbstractInterface\Singleton;
 
 class Di {
     use Singleton;

@@ -1,38 +1,21 @@
 <?php
 
-namespace SwooleTool\Component;
+namespace SwooleGlue\Component;
 
 use Monolog\Handler\RotatingFileHandler;
-use SwooleTool\AbstractInterface\LoggerWriterInterface;
-use SwooleTool\AbstractInterface\Singleton;
-use SwooleTool\Component\Config\ConfigUtil;
+use SwooleGlue\AbstractInterface\LoggerWriterInterface;
+use SwooleGlue\AbstractInterface\Singleton;
+use SwooleGlue\Component\Config\ConfigUtil;
 
-class Logger {
+class Logger extends \Monolog\Logger {
     use Singleton;
-
-    private $loggerWriter;
 
     function __construct() {
         $logDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
 
-        $this->loggerWriter = new \Monolog\Logger("swoole_glue_logger");
-        $this->loggerWriter->pushHandler(new RotatingFileHandler($logDir . "/debug.log"));
-
+        parent::__construct("swoole_glue_logger");
+        $this->pushHandler(new RotatingFileHandler($logDir . "/debug.log"));
     }
-
-    public function debug($logStr) {
-
-        $debug = $this->debugInfo();
-        $debug = "file[{$debug['file']}] function[{$debug['function']}] line[{$debug['line']}]";
-        $logStr = "{$debug} message: [{$logStr}]";
-
-        $this->loggerWriter->debug($logStr);
-    }
-
-    public function __call($name, $arguments) {
-        $this->loggerWriter->$name($arguments);
-    }
-
 
     private function debugInfo() {
         $trace = debug_backtrace();

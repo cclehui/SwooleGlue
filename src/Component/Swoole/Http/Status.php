@@ -6,7 +6,7 @@
  * Time: 下午12:00
  */
 
-namespace SwooleTool\Component\Swoole\Http;
+namespace SwooleGlue\Component\Swoole\Http;
 
 
 class Status {

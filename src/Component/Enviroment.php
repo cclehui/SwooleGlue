@@ -1,8 +1,8 @@
 <?php
-namespace SwooleTool\Component;
+namespace SwooleGlue\Component;
 
 //server 相关的一些环境处理
-use SwooleTool\Component\Config\ConfigUtil;
+use SwooleGlue\Component\Config\ConfigUtil;
 
 class Enviroment {
 
@@ -13,6 +13,8 @@ class Enviroment {
         self::systemDirInit();
 
         self::setErrorHandler();
+
+        self::registerShutdownFunc();
 
         //入口文件检测， 绝对路径
         $root_index_file = ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
@@ -29,8 +31,8 @@ class Enviroment {
         }
 
         $http_handler_obj = new $http_handler();
-        if (!$http_handler_obj instanceof \SwooleTool\Component\Swoole\Http\HttpHandler) {
-            die("HTTP HANDLER not instanceof \SwooleTool\Component\Swoole\Http\HttpHandler");
+        if (!$http_handler_obj instanceof \SwooleGlue\Component\Swoole\Http\HttpHandler) {
+            die("HTTP HANDLER not instanceof \SwooleGlue\Component\Swoole\Http\HttpHandler");
         }
 
         Di::getInstance()->set($http_handler, $http_handler_obj);
@@ -38,7 +40,7 @@ class Enviroment {
 
     }
 
-    public static function systemDirInit(): void {
+    protected static function systemDirInit(): void {
         //创建临时目录    请以绝对路径，不然守护模式运行会有问题
         $temp_dir = ConfigUtil::getInstance()->getConf('TEMP_DIR');
         if (empty($temp_dir)) {
@@ -60,31 +62,44 @@ class Enviroment {
             throw new \Exception("log directory create fail:$log_dir");
         }
 
+        $pid_file = $temp_dir . DIRECTORY_SEPARATOR;
+        $pid_file .= ConfigUtil::getInstance()->getConf('SWOOLE_PID_FILE') ? : 'pid.pid';
+        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.pid_file', $pid_file);
 
-        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.pid_file', $temp_dir . '/pid.pid');
-        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_dir . '/swoole.log');
+        $log_file = $log_dir . DIRECTORY_SEPARATOR;
+        $log_file .= ConfigUtil::getInstance()->getConf('SWOOLE_LOG_FILE') ? : 'swoole.log';
+        ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_dir);
     }
 
-    public static function setErrorHandler(): void {
-
+    protected static function setErrorHandler(): void {
         $userHandler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
         if (!is_callable($userHandler)) {
             $userHandler = function ($errorCode, $description, $file = null, $line = null) {
                 Trigger::error("trigger error:" . $description, $file, $line, $errorCode);
+
+                $logStr = ErrorUtil::getErrorLevelStr($errorCode) . ": $description at {$file} line {$line}";
+
+                Logger::getInstance()->error($logStr, debug_backtrace());
             };
         }
-        set_error_handler($userHandler);
 
+        set_error_handler($userHandler);
+    }
+
+    protected static function registerShutdownFunc(): void {
         $func = Di::getInstance()->get(SysConst::SHUTDOWN_FUNCTION);
         if (!is_callable($func)) {
-            $func = function () use ($conf) {
+            $func = function () {
                 $error = error_get_last();
                 if ($error) {
-                    Trigger::error("shutdown error:" . $error['message'], $error['file'], $error['line']);
+                    Logger::getInstance()->error("shutdown error", $error);
                 }
             };
         }
+
         register_shutdown_function($func);
     }
+
+
 
 }

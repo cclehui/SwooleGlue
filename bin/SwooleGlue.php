@@ -10,7 +10,7 @@ foreach ([__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php
     }
 }
 
-$server_manager = \SwooleTool\ServerManager::getInstance();
+$server_manager = \SwooleGlue\ServerManager::getInstance();
 
 //环境检测
 $server_manager->envCheck();

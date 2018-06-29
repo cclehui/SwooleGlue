@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\Component\Swoole;
+namespace SwooleGlue\Component\Swoole;
 
 
 class EventRegister extends Event {

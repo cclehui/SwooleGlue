@@ -1,9 +1,9 @@
 <?php
 
-namespace SwooleTool\Component\Config;
+namespace SwooleGlue\Component\Config;
 
-use SwooleTool\AbstractInterface\Singleton;
-use SwooleTool\Component\Spl\SplArray;
+use SwooleGlue\AbstractInterface\Singleton;
+use SwooleGlue\Component\Spl\SplArray;
 
 class ConfigUtil {
     protected $conf;
@@ -11,7 +11,7 @@ class ConfigUtil {
     use Singleton;
 
     public function __construct() {
-        $file = SWOOLESERVER_ROOT . '/SwooleToolConfig.php';
+        $file = SWOOLESERVER_ROOT . '/SwooleGlueConfig.php';
         $data = [];
         if (file_exists($file)) {
             $data = require $file;

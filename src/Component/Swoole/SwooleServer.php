@@ -1,12 +1,12 @@
 <?php
 
-namespace SwooleTool\Component\Swoole;
+namespace SwooleGlue\Component\Swoole;
 
 
-use SwooleTool\Component\Enviroment;
-use SwooleTool\Component\Invoker;
-use SwooleTool\Component\Config\ConfigUtil;
-use SwooleTool\Component\Pool\PoolManager;
+use SwooleGlue\Component\Enviroment;
+use SwooleGlue\Component\Invoker;
+use SwooleGlue\Component\Config\ConfigUtil;
+use SwooleGlue\Component\Pool\PoolManager;
 
 class SwooleServer {
 
@@ -76,7 +76,7 @@ class SwooleServer {
                     });
                 }
             } else {
-                Trigger::throwable(new \Exception("addListener with server name:{$serverName} at host:{$server['host']} port:{$server['port']} fail"));
+                throw new \Exception("addListener with server name:{$serverName} at host:{$server['host']} port:{$server['port']} fail");
             }
         }
     }
@@ -99,7 +99,7 @@ class SwooleServer {
                 $this->mainServer = new \swoole_websocket_server($host, $port, $runModel, $sockType);
                 break;
             default:
-                Trigger::throwable(new \Exception("unknown server type :{$conf['SERVER_TYPE']}"));
+                throw new \Exception("unknown server type :{$conf['SERVER_TYPE']}");
         }
 
         $this->mainServer->set($setting);

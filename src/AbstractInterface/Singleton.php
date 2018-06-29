@@ -1,5 +1,5 @@
 <?php
-namespace SwooleTool\AbstractInterface;
+namespace SwooleGlue\AbstractInterface;
 
 trait Singleton {
     private static $instance;

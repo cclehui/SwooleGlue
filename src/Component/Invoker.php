@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleTool\Component;
+namespace SwooleGlue\Component;
 
 use \Swoole\Process;
 
