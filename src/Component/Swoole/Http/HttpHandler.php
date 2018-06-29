@@ -9,12 +9,12 @@ class HttpHandler{
 
 
     /*
-     * @var | \Swoole\Http\Request
+     * @var $reqeust \Swoole\Http\Request
      */
     protected $request;
 
     /*
-     *  @var | \Swoole\Http\Response
+     *  @var $response \Swoole\Http\Response
      */
     protected $response;
 
