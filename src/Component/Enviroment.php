@@ -41,32 +41,22 @@ class Enviroment {
     }
 
     protected static function systemDirInit(): void {
-        //创建临时目录    请以绝对路径，不然守护模式运行会有问题
-        $temp_dir = ConfigUtil::getInstance()->getConf('TEMP_DIR');
-        if (empty($temp_dir)) {
-            ConfigUtil::getInstance()->setConf('TEMP_DIR', SWOOLESERVER_ROOT . '/Temp');
-            $temp_dir = SWOOLESERVER_ROOT . '/Temp';
+
+        $logDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
+        if (!$logDir) {
+            $logDir = SWOOLESERVER_ROOT . '/Log';
+            ConfigUtil::getInstance()->setConf('LOG_DIR', $logDir);
         }
 
-        if (!is_dir($temp_dir) && !mkdir($temp_dir)) {
-            throw new \Exception("temp directory create fail:$temp_dir");
+        if (!is_dir($logDir) && !mkdir($logDir)) {
+            throw new \Exception("log directory create fail:$logDir");
         }
 
-        $log_dir = ConfigUtil::getInstance()->getConf('LOG_DIR');
-        if (empty($log_dir)) {
-            ConfigUtil::getInstance()->setConf('LOG_DIR', SWOOLESERVER_ROOT . '/Log');
-            $log_dir = SWOOLESERVER_ROOT . '/Temp';
-        }
-
-        if (!is_dir($log_dir) && !mkdir($log_dir)) {
-            throw new \Exception("log directory create fail:$log_dir");
-        }
-
-        $pid_file = $temp_dir . DIRECTORY_SEPARATOR;
+        $pid_file = $logDir . DIRECTORY_SEPARATOR;
         $pid_file .= ConfigUtil::getInstance()->getConf('SWOOLE_PID_FILE') ? : 'pid.pid';
         ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.pid_file', $pid_file);
 
-        $log_file = $log_dir . DIRECTORY_SEPARATOR;
+        $log_file = $logDir . DIRECTORY_SEPARATOR;
         $log_file .= ConfigUtil::getInstance()->getConf('SWOOLE_LOG_FILE') ? : 'swoole.log';
 
         ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_file);

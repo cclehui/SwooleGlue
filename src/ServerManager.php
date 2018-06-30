@@ -92,10 +92,6 @@ class ServerManager {
         }
     }
 
-    function initConf() {
-        $this->releaseResource(__DIR__ . '/Config-demo.php', SWOOLESERVER_ROOT . '/SwooleGlueConfig.php');
-    }
-
     protected function releaseResource($source, $destination) {
         // 释放文件到目标位置
         clearstatcache();
@@ -396,44 +392,29 @@ LOGO;
     }
 
     function serverInstall($options) {
-        $lockFile = SWOOLESERVER_ROOT . '/SwooleGlue.install';
-        if (!is_file($lockFile)) {
-            $this->initConf();
-            $conf = ConfigUtil::getInstance();
-            $temp_path = $conf->getConf('TEMP_DIR') ? : 'Temp';
-            $log_path = $conf->getConf('LOG_DIR') ? : 'Log';
+        $confFile = SWOOLESERVER_ROOT . '/SwooleGlueConfig.php';
+        if (!is_file($confFile)) {
 
-            if (is_dir($temp_path)) {
-                echo 'Temp Directory has already existed, do you want to replace it? [ Y / N (default) ] : ';
-                $answer = strtolower(trim(strtoupper(fgets(STDIN))));
-                if (in_array($answer, ['y', 'yes'])) {
-                    if (!FileUtil::createDir($temp_path)) {
-                        die("create Temp Directory:{$temp_path} fail");
-                    }
-                }
-            } else {
-                if (!FileUtil::createDir($temp_path)) {
-                    die("create Temp Directory:{$temp_path} fail");
-                }
-            }
+            //配置文件
+            $this->releaseResource(__DIR__ . '/Config-demo.php', $confFile);
+
+            //Log目录
+            $conf = ConfigUtil::getInstance();
+            $log_path = $conf->getConf('LOG_DIR') ?: 'Log';
 
             if (is_dir($log_path)) {
                 echo 'Log Directory has already existed, do you want to replace it? [ Y / N (default) ] : ';
                 $answer = strtolower(trim(strtoupper(fgets(STDIN))));
                 if (in_array($answer, ['y', 'yes'])) {
                     if (!FileUtil::createDir($log_path)) {
-                        die("create Temp Directory:{$log_path} fail");
+                        die("create Log Directory:{$log_path} fail");
                     }
                 }
             } else {
                 if (!FileUtil::createDir($log_path)) {
-                    die("create Temp Directory:{$log_path} fail");
+                    die("create Log Directory:{$log_path} fail");
                 }
             }
-            file_put_contents($lockFile, 'installed at ' . date('Y-m-d H:i:s'));
-
-//            $realPath = getRelativelyPath(__DIR__ . '/SwooleGlue', SWOOLESERVER_ROOT);
-//            file_put_contents(SWOOLESERVER_ROOT . '/SwooleGlue', "<?php\nrequire '$realPath';");
 
             echo "SwooleGlue server install complete!\n";
 

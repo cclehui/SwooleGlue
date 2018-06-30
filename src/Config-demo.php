@@ -28,9 +28,8 @@ return [
     'LOG_LEVEL' => \Monolog\Logger::DEBUG,
 
     'DEBUG'=> true,
+    'LOG_DIR'=> null, //Log和运行中的一些临时文件目录 若不配置，则默认框架初始化
     'SWOOLE_PID_FILE' => 'pid.pid', //进程id存储的文件
     'SWOOLE_LOG_FILE' => 'swoole.log', //swoole log文件
-    'TEMP_DIR'=> null,//若不配置，则默认框架初始化
-    'LOG_DIR'=> null,//若不配置，则默认框架初始化
 
 ];
