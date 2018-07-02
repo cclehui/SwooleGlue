@@ -1,5 +1,5 @@
 {
-    "name": "cclehui/swooleglue",
+    "name": "cornor/swooleglue",
     "description": "SwooleGlue swoole和各种框架集成",
     "type": "library",
     "keywords": ["微服务","rpc", "swoole", "glue"],
@@ -10,12 +10,7 @@
             "url": "https://packagist.phpcomposer.com"
         }
     },
-    "authors": [
-        {
-            "name": "cclehui",
-            "email": "762414242@qq.com"
-        }
-    ],
+
     "minimum-stability": "dev",
     "require": {
         "eaglewu/swoole-ide-helper": "dev-master",
