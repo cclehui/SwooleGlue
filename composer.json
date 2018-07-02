@@ -11,9 +11,7 @@
         }
     },
 
-    "minimum-stability": "dev",
     "require": {
-        "eaglewu/swoole-ide-helper": "dev-master",
         "monolog/monolog": "1.23.0"
     },
     "autoload": {
