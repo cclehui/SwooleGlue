@@ -1,5 +1,5 @@
 {
-    "name": "connor/swooleglue",
+    "name": "connor/swoole-glue",
     "description": "SwooleGlue swoole和各种框架集成",
     "type": "library",
     "keywords": ["微服务","rpc", "swoole", "glue"],
