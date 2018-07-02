@@ -3,6 +3,7 @@
     "description": "SwooleGlue swoole和各种框架集成",
     "type": "library",
     "keywords": ["微服务","rpc", "swoole", "glue"],
+    "license": "MIT",
     "repositories": {
         "packagist": {
             "type": "composer",
