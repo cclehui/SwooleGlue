@@ -76,8 +76,8 @@ class ServerManager {
     }
 
     function envCheck() {
-        if (version_compare(phpversion(), '7.1', '<')) {
-            die("PHP version\e[31m must >= 7.1\e[0m\n");
+        if (version_compare(phpversion(), '7.0', '<')) {
+            die("PHP version\e[31m must >= 7.0\e[0m\n");
         }
         if (version_compare(phpversion('swoole'), '1.9.5', '<')) {
             die("Swoole extension version\e[31m must >= 1.9.5\e[0m\n");

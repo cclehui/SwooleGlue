@@ -14,7 +14,7 @@ use SwooleGlue\Component\SysConst;
 class EventHelper {
 
     //默认的 http handler
-    public static function registerDefaultOnRequest(EventRegister $register): void {
+    public static function registerDefaultOnRequest(EventRegister $register) {
         $register->set($register::onRequest, function (Request $request, Response $response)  {
 
 

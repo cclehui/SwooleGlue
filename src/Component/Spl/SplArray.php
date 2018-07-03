@@ -2,10 +2,8 @@
 
 namespace SwooleGlue\Component\Spl;
 
-class SplArray extends \ArrayObject
-{
-    function __get($name)
-    {
+class SplArray extends \ArrayObject {
+    function __get($name) {
         // TODO: Implement __get() method.
         if (isset($this[$name])) {
             return $this[$name];
@@ -14,24 +12,19 @@ class SplArray extends \ArrayObject
         }
     }
 
-    function __set($name, $value): void
-    {
-        // TODO: Implement __set() method.
+    function __set($name, $value) {
         $this[$name] = $value;
     }
 
-    function __toString(): string
-    {
+    function __toString(): string {
         return json_encode($this, JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES);
     }
 
-    function getArrayCopy(): array
-    {
+    function getArrayCopy(): array {
         return (array)$this;
     }
 
-    function set($path, $value): void
-    {
+    function set($path, $value) {
         $path = explode(".", $path);
         $temp = $this;
         while ($key = array_shift($path)) {
@@ -40,30 +33,28 @@ class SplArray extends \ArrayObject
         $temp = $value;
     }
 
-    function get($path)
-    {
+    function get($path) {
         $paths = explode(".", $path);
         $data = $this->getArrayCopy();
-        while ($key = array_shift($paths)){
-            if(isset($data[$key])){
+        while ($key = array_shift($paths)) {
+            if (isset($data[$key])) {
                 $data = $data[$key];
-            }else{
+            } else {
                 return null;
             }
         }
         return $data;
     }
 
-    public function delete($key): void
-    {
+    public function delete($key) {
         $path = explode(".", $key);
         $lastKey = array_pop($path);
         $data = $this->getArrayCopy();
         $copy = &$data;
-        while ($key = array_shift($path)){
-            if(isset($copy[$key])){
+        while ($key = array_shift($path)) {
+            if (isset($copy[$key])) {
                 $copy = &$copy[$key];
-            }else{
+            } else {
                 return;
             }
         }
@@ -75,8 +66,7 @@ class SplArray extends \ArrayObject
      * 数组去重取唯一的值
      * @return SplArray
      */
-    public function unique(): SplArray
-    {
+    public function unique(): SplArray {
         return new SplArray(array_unique($this->getArrayCopy()));
     }
 
@@ -84,8 +74,7 @@ class SplArray extends \ArrayObject
      * 获取数组中重复的值
      * @return SplArray
      */
-    public function multiple(): SplArray
-    {
+    public function multiple(): SplArray {
         $unique_arr = array_unique($this->getArrayCopy());
         return new SplArray(array_diff_assoc($this->getArrayCopy(), $unique_arr));
     }
@@ -94,8 +83,7 @@ class SplArray extends \ArrayObject
      * 按照键值升序
      * @return SplArray
      */
-    public function asort(): SplArray
-    {
+    public function asort(): SplArray {
         parent::asort();
         return $this;
     }
@@ -104,8 +92,7 @@ class SplArray extends \ArrayObject
      * 按照键升序
      * @return SplArray
      */
-    public function ksort(): SplArray
-    {
+    public function ksort(): SplArray {
         parent::ksort();
         return $this;
     }
@@ -115,8 +102,7 @@ class SplArray extends \ArrayObject
      * @param int $sort_flags
      * @return SplArray
      */
-    public function sort($sort_flags = SORT_REGULAR): SplArray
-    {
+    public function sort($sort_flags = SORT_REGULAR): SplArray {
         $temp = $this->getArrayCopy();
         sort($temp, $sort_flags);
         return new SplArray($temp);
@@ -124,12 +110,11 @@ class SplArray extends \ArrayObject
 
     /**
      * 取得某一列
-     * @param string      $column
+     * @param string $column
      * @param null|string $index_key
      * @return SplArray
      */
-    public function column($column, $index_key = null): SplArray
-    {
+    public function column($column, $index_key = null): SplArray {
         return new SplArray(array_column($this->getArrayCopy(), $column, $index_key));
     }
 
@@ -137,19 +122,17 @@ class SplArray extends \ArrayObject
      * 交换数组中的键和值
      * @return SplArray
      */
-    public function flip(): SplArray
-    {
+    public function flip(): SplArray {
         return new SplArray(array_flip($this->getArrayCopy()));
     }
 
     /**
      * 过滤本数组
-     * @param string|array $keys    需要取得/排除的键
-     * @param bool         $exclude true则排除设置的键名 false则仅获取设置的键名
+     * @param string|array $keys 需要取得/排除的键
+     * @param bool $exclude true则排除设置的键名 false则仅获取设置的键名
      * @return SplArray
      */
-    public function filter($keys, $exclude = false): SplArray
-    {
+    public function filter($keys, $exclude = false): SplArray {
         if (is_string($keys)) {
             $keys = explode(',', $keys);
         }
@@ -168,8 +151,7 @@ class SplArray extends \ArrayObject
      * 提取数组中的键
      * @return SplArray
      */
-    public function keys(): SplArray
-    {
+    public function keys(): SplArray {
         return new SplArray(array_keys($this->getArrayCopy()));
     }
 
@@ -177,21 +159,18 @@ class SplArray extends \ArrayObject
      * 提取数组中的值
      * @return SplArray
      */
-    public function values(): SplArray
-    {
+    public function values(): SplArray {
         return new SplArray(array_values($this->getArrayCopy()));
     }
 
-    public function flush():SplArray
-    {
-        foreach ($this as $key => $item){
+    public function flush(): SplArray {
+        foreach ($this as $key => $item) {
             unset($this[$key]);
         }
         return $this;
     }
 
-    public function loadArray(array $data)
-    {
+    public function loadArray(array $data) {
         parent::__construct($data);
     }
 }

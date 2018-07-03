@@ -41,7 +41,7 @@ class ConfigUtil {
      * @param string $keyPath 配置项名称 支持点语法
      * @param mixed $data 配置项数据
      */
-    public function setConf($keyPath, $data): void {
+    public function setConf($keyPath, $data) {
         $this->conf->set($keyPath, $data);
     }
 
@@ -57,7 +57,7 @@ class ConfigUtil {
      * 覆盖配置项
      * @param array $conf 配置项数组
      */
-    public function load(array $conf): void {
+    public function load(array $conf) {
         $this->conf = new SplArray($conf);
     }
 

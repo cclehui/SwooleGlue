@@ -40,7 +40,7 @@ class Enviroment {
 
     }
 
-    protected static function systemDirInit(): void {
+    protected static function systemDirInit() {
 
         $logDir = ConfigUtil::getInstance()->getConf('LOG_DIR');
         if (!$logDir) {
@@ -62,7 +62,7 @@ class Enviroment {
         ConfigUtil::getInstance()->setConf('MAIN_SERVER.SETTING.log_file', $log_file);
     }
 
-    protected static function setErrorHandler(): void {
+    protected static function setErrorHandler() {
         $userHandler = Di::getInstance()->get(SysConst::ERROR_HANDLER);
         if (!is_callable($userHandler)) {
             $userHandler = function ($errorCode, $description, $file = null, $line = null) {
@@ -75,7 +75,7 @@ class Enviroment {
         set_error_handler($userHandler, E_ERROR);
     }
 
-    protected static function registerShutdownFunc(): void {
+    protected static function registerShutdownFunc() {
         $func = Di::getInstance()->get(SysConst::SHUTDOWN_FUNCTION);
         if (!is_callable($func)) {
             $func = function () {

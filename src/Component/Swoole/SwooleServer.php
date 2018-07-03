@@ -39,7 +39,7 @@ class SwooleServer {
         return $this->isStart;
     }
 
-    public function start(): void {
+    public function start() {
 
         if (!$this->isStart) {
             Enviroment::init();
@@ -52,7 +52,7 @@ class SwooleServer {
     }
 
 
-    private function attachListener(): void {
+    private function attachListener() {
         $mainServer = $this->getServer();
         foreach ($this->serverList as $serverName => $server) {
             $subPort = $mainServer->addlistener($server['host'], $server['port'], $server['type']);
@@ -128,7 +128,7 @@ class SwooleServer {
         return $this->mainServer;
     }
 
-    public function getServer($serverName = null): ?\swoole_server {
+    public function getServer($serverName = null): \swoole_server {
         if ($this->mainServer) {
             if ($serverName === null) {
                 return $this->mainServer;
@@ -136,10 +136,11 @@ class SwooleServer {
                 if (isset($this->serverList[$serverName])) {
                     return $this->serverList[$serverName];
                 }
-                return null;
+
+                throw new \Exception("server $serverName not exists");
             }
         } else {
-            return null;
+            throw new \Exception("server $serverName not exists, mainServer not exists");
         }
     }
 

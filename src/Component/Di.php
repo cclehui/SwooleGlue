@@ -9,7 +9,7 @@ class Di {
     use Singleton;
     private $container = array();
 
-    public function set($key, $obj, ...$arg): void {
+    public function set($key, $obj, ...$arg) {
         if (count($arg) == 1 && is_array($arg[0])) {
             $arg = $arg[0];
         }
@@ -20,11 +20,11 @@ class Di {
         $this->container[$key] = array("obj" => $obj, "params" => $arg,);
     }
 
-    function delete($key): void {
+    function delete($key) {
         unset($this->container[$key]);
     }
 
-    function clear(): void {
+    function clear() {
         $this->container = array();
     }
 
