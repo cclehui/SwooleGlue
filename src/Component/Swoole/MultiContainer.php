@@ -34,7 +34,7 @@ class MultiContainer {
         return $this;
     }
 
-    function get($key): ?array {
+    function get($key) {
         if (isset($this->container[$key])) {
             return $this->container[$key];
         } else {

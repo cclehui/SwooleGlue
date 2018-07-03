@@ -28,7 +28,7 @@ class TableManager {
         }
     }
 
-    public function get($name): ?Table {
+    public function get($name) {
         if (isset($this->list[$name])) {
             return $this->list[$name];
         } else {

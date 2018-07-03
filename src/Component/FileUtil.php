@@ -185,7 +185,7 @@ class FileUtil {
         }
     }
 
-    static function scanDir($dirPath, $filterType = self::TYPE_FILE): ?array {
+    static function scanDir($dirPath, $filterType = self::TYPE_FILE) {
         $res = [];
         if (is_dir($dirPath)) {
             try {

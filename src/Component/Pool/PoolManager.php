@@ -42,7 +42,7 @@ class PoolManager {
         return false;
     }
 
-    function getPool(string $class): ?Pool {
+    function getPool(string $class) {
         if (isset($this->poolObjectList[$class])) {
             return $this->poolObjectList[$class];
         } else {
