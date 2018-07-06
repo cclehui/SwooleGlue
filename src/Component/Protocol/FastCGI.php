@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleGlue\Component\Swoole\Protocol;
+namespace SwooleGlue\Component\Protocol;
 
 class FastCGI {
 
@@ -52,6 +52,7 @@ class FastCGI {
             case self::ST_WAIT:
                 return;
             default:
+                //handler request
                 break;
         }
 
