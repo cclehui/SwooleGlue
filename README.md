@@ -19,3 +19,8 @@ server {
 
 
 ```
+
+
+## fastcgi 协议解析
+fastcgi协议解析引入了 lisachenko/protocol-fcgi 1.1.1 版本，
+参考https://github.com/lisachenko/protocol-fcgi/tree/1.1.1
