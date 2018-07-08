@@ -7,6 +7,7 @@ use SwooleGlue\Component\Enviroment;
 use SwooleGlue\Component\Invoker;
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\Component\Pool\PoolManager;
+use SwooleGlue\Component\Protocol\FCGI;
 
 class SwooleServer {
 
@@ -15,9 +16,10 @@ class SwooleServer {
     private $mainServer = null;
     private $isStart = false;
 
-    const TYPE_SERVER = 1;
-    const TYPE_WEB_SERVER = 2;
-    const TYPE_WEB_SOCKET_SERVER = 3;
+    const TYPE_TCP_SERVER = 1;
+    const TYPE_HTTP_SERVER = 2;
+    const TYPE_WEBSOCKET_SERVER = 3;
+    const TYPE_FAST_CGI_SERVER = 4;//fast cgi server
 
     protected function __construct() {
     }
@@ -89,14 +91,17 @@ class SwooleServer {
         $setting = $conf['SETTING'];
         $sockType = $conf['SOCK_TYPE'];
         switch ($conf['SERVER_TYPE']) {
-            case self::TYPE_SERVER:
+            case self::TYPE_TCP_SERVER:
                 $this->mainServer = new \swoole_server($host, $port, $runModel, $sockType);
                 break;
-            case self::TYPE_WEB_SERVER:
+            case self::TYPE_HTTP_SERVER:
                 $this->mainServer = new \swoole_http_server($host, $port, $runModel, $sockType);
                 break;
-            case self::TYPE_WEB_SOCKET_SERVER:
+            case self::TYPE_WEBSOCKET_SERVER:
                 $this->mainServer = new \swoole_websocket_server($host, $port, $runModel, $sockType);
+                break;
+            case self::TYPE_FAST_CGI_SERVER:
+                $this->mainServer = new \swoole_server($host, $port, $runModel, $sockType);
                 break;
             default:
                 throw new \Exception("unknown server type :{$conf['SERVER_TYPE']}");
@@ -162,15 +167,23 @@ class SwooleServer {
             }
         });
 
-//        EventHelper::registerDefaultOnTask($register);
-//        EventHelper::registerDefaultOnFinish($register);
-//        EventHelper::registerDefaultOnPipeMessage($register);
+        //        EventHelper::registerDefaultOnTask($register);
+        //        EventHelper::registerDefaultOnFinish($register);
+        //        EventHelper::registerDefaultOnPipeMessage($register);
         $conf = ConfigUtil::getInstance()->getConf("MAIN_SERVER");
-        if ($conf['SERVER_TYPE'] == self::TYPE_WEB_SERVER
-            || $conf['SERVER_TYPE'] == self::TYPE_WEB_SOCKET_SERVER) {
-            if (!$register->get($register::onRequest)) {
-                EventHelper::registerDefaultOnRequest($register);
-            }
+
+        switch ($conf['SERVER_TYPE']) {
+            case self::TYPE_HTTP_SERVER:
+            case self::TYPE_WEBSOCKET_SERVER:
+                if (!$register->get($register::onRequest)) {
+                    $register->set($register::onRequest, EventHelper::defaultHttpOnRequestHandler);
+                }
+                break;
+
+            case self::TYPE_FAST_CGI_SERVER:
+                $fcgi = new FCGI();
+                $register->set($register::onReceive, [$fcgi,'onReceive']);
+                break;
         }
 
         return $register;

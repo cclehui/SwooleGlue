@@ -6,12 +6,12 @@ return [
     'MAIN_SERVER'=> [
         'HOST'=> '0.0.0.0',
         'PORT'=> 9501,
-        'SERVER_TYPE'=> \SwooleGlue\Component\Swoole\SwooleServer::TYPE_WEB_SERVER,
-        'SOCK_TYPE'=> SWOOLE_TCP,//该配置项当为SERVER_TYPE值为TYPE_SERVER时有效
+        'SERVER_TYPE'=> \SwooleGlue\Component\Swoole\SwooleServer::TYPE_FAST_CGI_SERVER,
+        'SOCK_TYPE'=> SWOOLE_TCP,//该配置项当为SERVER_TYPE值为TYPE_SERVER时有效  //cclehui_todo
         'RUN_MODEL'=> SWOOLE_PROCESS,
         'SETTING'=> [
-            'task_worker_num' => 8, //异步任务进程
-            'task_max_request'=> 10,
+//            'task_worker_num' => 8, //异步任务进程
+//            'task_max_request'=> 10,
             'max_request' => 5000,//强烈建议设置此配置项
             'worker_num'=> 8,
         ],
