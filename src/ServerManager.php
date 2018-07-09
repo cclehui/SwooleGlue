@@ -7,7 +7,9 @@ namespace SwooleGlue;
  */
 
 use SwooleGlue\AbstractInterface\Singleton;
+use SwooleGlue\Component\Enviroment;
 use SwooleGlue\Component\FileUtil;
+use SwooleGlue\Component\Logger;
 use SwooleGlue\Component\Swoole\SwooleServer;
 use SwooleGlue\Component\SysConst;
 use SwooleGlue\Component\Config\ConfigUtil;
@@ -179,7 +181,6 @@ HELP_INSTALL;
                 break;
 
             default:
-                $this->showLogo();
                 echo <<<DEFAULTHELP
 
 \e[33m使用:\e[0m
@@ -199,22 +200,8 @@ DEFAULTHELP;
         }
     }
 
-    function showLogo() {
-        echo <<<LOGO
-   _____                              _
-  / ____|                            | |
- | (___   __      __   ___     ___   | |   ___
-  \___ \  \ \ /\ / /  / _ \   / _ \  | |  / _ \
-  ____) |  \ V  V /  | (_) | | (_) | | | |  __/
- |_____/    \_/\_/    \___/   \___/  |_|  \___|
- 
- 
-
-LOGO;
-    }
-
     function showTag($name, $value) {
-        echo "\e[32m" . str_pad($name, 20, ' ', STR_PAD_RIGHT) . "\e[34m" . $value . "\e[0m\n";
+        Logger::getInstance()->info("\e[32m" . str_pad($name, 20, ' ', STR_PAD_RIGHT) . "\e[34m" . $value . "\e[0m\n");
     }
 
     function getRelativelyPath($a, $b) {
@@ -245,10 +232,14 @@ LOGO;
     }
 
     function serverStart($options) {
-        $this->showLogo();
+
         $conf = ConfigUtil::getInstance();
+
+        //初始化环境信息
+        Enviroment::init();
+
         $version = $conf->getConf(SysConst::VERSION);
-        echo "\n\e[31mSwooleGlue\e[0m framework \e[34mVersion {$version}\e[0m\n\n";
+        Logger::getInstance()->info("\n\e[31mSwooleGlue\e[0m framework \e[34mVersion {$version}\e[0m\n\n");
 
         // listen host set
         if (isset($options['ip'])) {

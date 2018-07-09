@@ -8,28 +8,20 @@ class Request {
      * @var int
      */
     public $fd;
-    public $id;
+    public $requestId; // FastCgi requestId
+    public $fcgiVersion;
 
     public $get = array();
     public $post = array();
     public $files = array();
     public $cookie = array();
     public $session = array();
-    public $request;
     public $server = array();
-
-    /**
-     * @var \StdClass
-     */
-    public $attrs;
+    public $request = array();
 
     public $header = array();
     public $body;
     public $meta = array();
-
-    public $finish = false;
-    public $ext_name;
-    public $status;
 
     /**
      * 将原始请求信息转换到PHP超全局变量中

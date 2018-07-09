@@ -8,6 +8,7 @@ use SwooleGlue\Component\Invoker;
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\Component\Pool\PoolManager;
 use SwooleGlue\Component\Protocol\FCGI;
+use SwooleGlue\Component\Swoole\Http\HttpHandler;
 
 class SwooleServer {
 
@@ -42,10 +43,6 @@ class SwooleServer {
     }
 
     public function start() {
-
-        if (!$this->isStart) {
-            Enviroment::init();
-        }
 
         $this->createMainServer();
         $this->attachListener();
@@ -176,7 +173,8 @@ class SwooleServer {
             case self::TYPE_HTTP_SERVER:
             case self::TYPE_WEBSOCKET_SERVER:
                 if (!$register->get($register::onRequest)) {
-                    $register->set($register::onRequest, EventHelper::defaultHttpOnRequestHandler);
+                    $httpHandler = new HttpHandler();
+                    $register->set($register::onRequest, [$httpHandler, 'onRequest']);
                 }
                 break;
 

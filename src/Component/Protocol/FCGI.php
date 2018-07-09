@@ -6,6 +6,8 @@
 
 namespace SwooleGlue\Component\Protocol;
 
+use SwooleGlue\Component\Logger;
+use SwooleGlue\Component\PhpCgiRunner;
 use SwooleGlue\Component\Protocol\FCGI\FrameParser;
 use SwooleGlue\Component\Protocol\FCGI\ProtocolException;
 use SwooleGlue\Component\Protocol\FCGI\Record;
@@ -73,9 +75,9 @@ class FCGI {
     const UNKNOWN_ROLE = 3;
 
     //fastcgi request 数据的状态
-    const STATUS_FINISH = 1; //完成，进入处理流程
+    const STATUS_FINISH = 10; //完成，进入处理流程
     const STATUS_WAIT = 2; //等待数据
-    const STATUS_CLOSE = 3; //错误，丢弃此包
+    const STATUS_CLOSE = 99; //错误，丢弃此包
 
     /*
      * @var | array
@@ -98,12 +100,10 @@ class FCGI {
 
         $packageStatus = self::STATUS_WAIT;
 
-        echo "xxxxxxxxxx:$data\n";
+        Logger::getInstance()->debug("FCGI data:$data");
 
         while (FrameParser::hasFrame($this->bufferData[$fd])) {
             $record = FrameParser::parseFrame($this->bufferData[$fd]);
-
-            echo $record . "\n";
 
             //判断数据包的状态
             switch ($record->getType()) {
@@ -135,6 +135,8 @@ class FCGI {
                     break;
             }
 
+            Logger::getInstance()->debug("FCGI status, recordType:" . $record->getType() . ", packageStatus:$packageStatus");
+
             //根据当前数据包的状态做处理
             switch ($packageStatus) {
                 case self::STATUS_FINISH:
@@ -144,7 +146,7 @@ class FCGI {
 
                     //设置全局变量
                     $request->setGlobal();
-                    $response = new Response($server, $fd);
+                    $response = new Response($request, $server, $fd);
 
                     $this->handleRequest($request, $response); //处理请求
                     return true;
@@ -169,22 +171,39 @@ class FCGI {
     //处理请求
     public function handleRequest(Request $request, Response $response) {
 
-        $server = $response->server;
-        $fd = $response->fd;
+        try {
 
-        ob_start();
-        print_r($request);
+            $stdout = PhpCgiRunner::runPhp();
+            $headerStr = PhpCgiRunner::getHttpHeadersStr();
 
-        $result = ob_get_contents();
-        ob_end_clean();
+            $result = $headerStr . "\r\n" . $stdout;
 
-        $stdoutRecord = new Record\Stdout($result);
-        $server->send($fd, $stdoutRecord->getContentData());
+            //发送结果
+            $response->sendStdoutResponse($result);
 
-        $endRequest = new Record\EndRequest(self::REQUEST_COMPLETE);
-        $server->send($fd, $endRequest->getContentData());
-        $server->close($fd);
+            Logger::getInstance()->info("dddddd:$headerStr, " . php_sapi_name());
 
+
+        } catch (\Throwable $throwable) {
+
+            switch ($throwable->getCode()) {//优化
+                case E_ERROR:
+                    Logger::getInstance()->error($throwable->getCode() . ", " . $throwable->getMessage() . ", " . $throwable->getTraceAsString());
+                    break;
+                default:
+                    Logger::getInstance()->info($throwable->getCode() . ", " . $throwable->getMessage() . ", " . $throwable->getTraceAsString());
+
+            }
+
+
+//            $response->status(Status::CODE_INTERNAL_SERVER_ERROR);
+            $response->sendStdoutResponse("dddddddddddddddddddddddd");
+//            $response->sendStdoutResponse(nl2br($throwable->getMessage() . "\n" . $throwable->getTraceAsString()));
+        }
+
+
+        //结束请求
+        $response->sendEndRequest();
     }
 
     /**
@@ -276,7 +295,8 @@ class FCGI {
 
         $request = new Request();
         $request->fd = $fd;
-        $request->id = $requestId;
+        $request->requestId = $requestId;
+        $request->fcgiVersion = $record->getVersion();
         $request->body = fopen('php://input', 'r+');
 //        $request->body = "";
 

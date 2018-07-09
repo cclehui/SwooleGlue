@@ -2,6 +2,7 @@
 
 namespace SwooleGlue\Component\Protocol\FCGI;
 
+use SwooleGlue\Component\Protocol\FCGI\Record\EndRequest;
 use SwooleGlue\Component\Protocol\FCGI\Record\Stdout;
 
 class Response {
@@ -16,32 +17,62 @@ class Response {
      */
     public $server;
 
+    /**
+     * @var Request
+     */
+    public $request;
 
-    public function __construct(\swoole_server $server, int $fd) {
+    public $httpHeaders = [];
+
+
+    public function __construct(Request $request, \swoole_server $server, int $fd) {
+        $this->request = $request;
         $this->server = $server;
         $this->fd = $fd;
     }
 
-    public function sendResponse(string $data) {
+    public function addHeader($name, $value) {
+
+    }
+
+    /**
+     * 返回结果
+     * @param string $data
+     */
+    public function sendStdoutResponse(string $data) {
         $dataLength = strlen($data);
 
         if ($dataLength <= 65535) {
             $record = new Stdout($data);
-            $this->server->send($this->fd, $record->getContentData());
+            $record->setRequestId($this->request->requestId);
+            $this->server->send($this->fd, strval($record));
+
         } else {
             $start = 0;
             $chunkSize = 8092;
             do {
-
                 $record = new Stdout(substr($data, $start, $chunkSize));
-                $this->server->send($this->fd, $record->getContentData());
+                $record->setRequestId($this->request->requestId);
+                $this->server->send($this->fd, strval($record));
                 $start += $chunkSize;
 
             } while($start < $dataLength);
 
             $record = new Stdout("");
-            $this->server->send($this->fd, $record->getContentData());
+            $record->setRequestId($this->request->requestId);
+            $this->server->send($this->fd, strval($record));
         }
+    }
+
+    /**
+     * 结束请求
+     */
+    public function sendEndRequest() {
+        $record = new EndRequest();
+        $record->setRequestId($this->request->requestId);
+
+        $this->server->send($this->fd, strval($record));
+        $this->server->close($this->fd);
     }
 
 }
