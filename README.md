@@ -5,6 +5,9 @@ server端集成swoole的插件，方便集成到现有的框架中，实现项�
 //安装配置
 php bin/SwooleGlue.php install 
 
+实现SwooleGlue\Component\PServerlet类，在这里做业务处理，并在配置文件中配置实现后的 PServerlet类
+
+
 启动server
 php bin/SwooleGlue.php start 
 

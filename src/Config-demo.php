@@ -17,13 +17,11 @@ return [
         ],
     ],
 
-    'PSERVERLET' => '', //server 处理的handler  PServerlet 的实例化类
+    'PSERVERLET' => '', //server 处理的handler  SwooleGlue\Componen\PServerlet 的实现类
     //'ROOT_INDEX_FILE' => '', //http处理的入口文件
 
     'ERROR_HANDLER' => null,
     'SHUTDOWN_FUNCTION' => null,
-    'ROOT_INDEX_FILE' => "index.php",
-
 
     'LOG_LEVEL' => \Monolog\Logger::DEBUG,
 
