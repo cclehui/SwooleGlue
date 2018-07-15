@@ -1,7 +1,19 @@
 # SwooleGlue
 server端集成swoole的插件，方便集成到现有的框架中，实现项目的无缝迁移，新一代LAMP开发模式
 
+```php
+//安装配置
+php bin/SwooleGlue.php install 
 
+启动server
+php bin/SwooleGlue.php start 
+
+```
+
+# http response header问题解决
+fpm模式下通常通过header(), setcookie()等函数来设置response 的header信息
+，由于咱们使用cli模式运行php， 常规的header_list()取不到header信息了， 需要对header(),
+setcookie()进行封装替换
 
 
 # nginx + SwooleGlue  配置

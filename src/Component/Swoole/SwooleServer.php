@@ -7,8 +7,8 @@ use SwooleGlue\Component\Enviroment;
 use SwooleGlue\Component\Invoker;
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\Component\Pool\PoolManager;
-use SwooleGlue\Component\Protocol\FCGI;
-use SwooleGlue\Component\Swoole\Http\HttpHandler;
+use SwooleGlue\Component\Protocol\FCGIHandler;
+use SwooleGlue\Component\Protocol\HttpHandler;
 
 class SwooleServer {
 
@@ -179,7 +179,7 @@ class SwooleServer {
                 break;
 
             case self::TYPE_FAST_CGI_SERVER:
-                $fcgi = new FCGI();
+                $fcgi = new FCGIHandler();
                 $register->set($register::onReceive, [$fcgi,'onReceive']);
                 break;
         }

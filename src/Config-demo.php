@@ -17,8 +17,8 @@ return [
         ],
     ],
 
-    'HTTP_HANDLER' => '', //http处理的handler
-    'ROOT_INDEX_FILE' => '', //http处理的入口文件
+    'PSERVERLET' => '', //server 处理的handler  PServerlet 的实例化类
+    //'ROOT_INDEX_FILE' => '', //http处理的入口文件
 
     'ERROR_HANDLER' => null,
     'SHUTDOWN_FUNCTION' => null,

@@ -6,7 +6,7 @@
 
 namespace SwooleGlue\Component\Protocol\FCGI\Record;
 
-use SwooleGlue\Component\Protocol\FCGI;
+use SwooleGlue\Component\Protocol\FCGI\FCGI;
 use SwooleGlue\Component\Protocol\FCGI\Record;
 
 

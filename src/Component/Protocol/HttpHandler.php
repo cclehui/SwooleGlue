@@ -1,6 +1,6 @@
 <?php
 
-namespace SwooleGlue\Component\Swoole\Http;
+namespace SwooleGlue\Component\Protocol;
 
 
 use SwooleGlue\Component\Di;

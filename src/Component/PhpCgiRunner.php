@@ -14,10 +14,12 @@ class PhpCgiRunner {
 
         ob_start();
 
-        include \SwooleGlue\Component\Config\ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
+//        include \SwooleGlue\Component\Config\ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
+        Di::getInstance()->get(SysConst::PSERVERLET)->doRequest();
 
         $result = ob_get_contents();
         ob_end_clean();
+
 
         return $result;
     }

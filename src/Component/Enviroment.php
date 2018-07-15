@@ -17,27 +17,29 @@ class Enviroment {
         self::registerShutdownFunc();
 
         //入口文件检测， 绝对路径
-        $root_index_file = ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
-        if (!is_file($root_index_file)) {
-            die("root index file: $root_index_file not exists\n");
+//        $root_index_file = ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
+//        if (!is_file($root_index_file)) {
+//            die("root index file: $root_index_file not exists\n");
+//        }
+
+
+        //入口处理类, 绝对路径
+        $pserverlet = ConfigUtil::getInstance()->getConf(SysConst::PSERVERLET);
+        if (!$pserverlet) {
+            die("Config PSERVERLET is empty");
         }
 
-
-        //入口处理类
-        /*
-        $http_handler = ConfigUtil::getInstance()->getConf(SysConst::HTTP_HANDLER);
-        if (!$http_handler || !class_exists($http_handler)) {
-            die("HTTP HANDLER not exists");
+        require_once SWOOLESERVER_ROOT .DIRECTORY_SEPARATOR. $pserverlet . '.php';
+        if (!class_exists($pserverlet)) {
+            die("Config PSERVERLET class $pserverlet not exists");
         }
 
-        $http_handler_obj = new $http_handler();
-        if (!$http_handler_obj instanceof \SwooleGlue\Component\Swoole\Http\HttpHandler) {
-            die("HTTP HANDLER not instanceof \SwooleGlue\Component\Swoole\Http\HttpHandler");
+        $pserverletInstance = $pserverlet::getInstance();
+        if (!($pserverletInstance instanceof PServerlet)) {
+            die("Config PSERVERLET $pserverlet is not instanceof PServerlet");
         }
 
-        Di::getInstance()->set($http_handler, $http_handler_obj);
-        */
-
+        Di::getInstance()->set(SysConst::PSERVERLET, $pserverletInstance);
     }
 
     protected static function systemDirInit() {

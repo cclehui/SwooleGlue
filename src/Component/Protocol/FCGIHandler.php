@@ -1,78 +1,17 @@
 <?php
-/**
- * @author Alexander.Lisachenko
- * @date 14.07.2014
- */
 
 namespace SwooleGlue\Component\Protocol;
 
 use SwooleGlue\Component\Logger;
 use SwooleGlue\Component\PhpCgiRunner;
+use SwooleGlue\Component\Protocol\FCGI\FCGI;
 use SwooleGlue\Component\Protocol\FCGI\FrameParser;
 use SwooleGlue\Component\Protocol\FCGI\ProtocolException;
 use SwooleGlue\Component\Protocol\FCGI\Record;
 use SwooleGlue\Component\Protocol\FCGI\Response;
 use SwooleGlue\Component\Protocol\FCGI\Request;
 
-class FCGI {
-    /**
-     * Number of bytes in a FCGI_Header.  Future versions of the protocol
-     * will not reduce this number.
-     */
-    const HEADER_LEN = 8;
-
-    /**
-     * Format of FCGI_HEADER for unpacking in PHP
-     */
-    const HEADER_FORMAT = "Cversion/Ctype/nrequestId/ncontentLength/CpaddingLength/Creserved";
-
-    /**
-     * Value for version component of FCGI_Header
-     */
-    const VERSION_1 = 1;
-
-    /**
-     * Values for type component of FCGI_Header
-     * 请求包的 type
-     */
-    const BEGIN_REQUEST = 1;
-    const ABORT_REQUEST = 2;
-    const END_REQUEST = 3;
-    const PARAMS = 4;
-    const STDIN = 5;
-    const STDOUT = 6;
-    const STDERR = 7;
-    const DATA = 8;
-    const GET_VALUES = 9;
-    const GET_VALUES_RESULT = 10;
-    const UNKNOWN_TYPE = 11;
-
-    /**
-     * Value for requestId component of FCGI_Header
-     */
-    const NULL_REQUEST_ID = 0;
-
-    /**
-     * Mask for flags component of FCGI_BeginRequestBody
-     */
-    const KEEP_CONN = 1;
-
-    /**
-     * Values for role component of FCGI_BeginRequestBody
-     *  角色定义
-     */
-    const RESPONDER = 1;
-    const AUTHORIZER = 2;
-    const FILTER = 3;
-
-    /**
-     * Values for protocolStatus component of FCGI_EndRequestBody
-     * 结束请求的包的 的protocolStatus 状态定义
-     */
-    const REQUEST_COMPLETE = 0; //请求的正常结束
-    const CANT_MPX_CONN = 1; //拒绝新请求。
-    const OVERLOADED = 2;
-    const UNKNOWN_ROLE = 3;
+class FCGIHandler {
 
     //fastcgi request 数据的状态
     const STATUS_FINISH = 10; //完成，进入处理流程
@@ -107,25 +46,25 @@ class FCGI {
 
             //判断数据包的状态
             switch ($record->getType()) {
-                case self::BEGIN_REQUEST: //请求开始
+                case FCGI::BEGIN_REQUEST: //请求开始
                     if (!$this->handleNewRequest($record, $fd)) {
                         $packageStatus = self::STATUS_CLOSE;
                     }
                     $packageStatus = self::STATUS_WAIT;
                     break;
 
-                case self::ABORT_REQUEST:
+                case FCGI::ABORT_REQUEST:
                     $packageStatus = self::STATUS_CLOSE;
                     break;
 
-                case self::PARAMS:
+                case FCGI::PARAMS:
                     if (!$this->handleRequestParams($record)) {
                         $packageStatus = self::STATUS_CLOSE;
                     }
                     $packageStatus = self::STATUS_WAIT;
                     break;
 
-                case self::STDIN:
+                case FCGI::STDIN:
                     if ($record->getContentLength() <= 0) {
                         $packageStatus = self::STATUS_FINISH;
                     } else {
@@ -289,7 +228,7 @@ class FCGI {
             throw new ProtocolException("handleNewRequest:$requestId has no request inited ");
         }
 
-        if ($record->getRole() != self::RESPONDER) {
+        if ($record->getRole() != FCGI::RESPONDER) {
             throw new ProtocolException('handleNewRequest unsupported Role:' . $record->getRole());
         }
 

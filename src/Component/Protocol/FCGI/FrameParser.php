@@ -1,12 +1,5 @@
 <?php
-/**
- * @author Alexander.Lisachenko
- * @date 08.09.2015
- */
-
 namespace SwooleGlue\Component\Protocol\FCGI;
-
-use SwooleGlue\Component\Protocol\FCGI;
 
 /**
  * Utility class to simplify parsing of FCGI protocol data
@@ -18,17 +11,17 @@ class FrameParser {
      * @var array
      */
     protected static $classMapping = [
-        FCGI::BEGIN_REQUEST => FCGI\Record\BeginRequest::class,
-        FCGI::ABORT_REQUEST => FCGI\Record\AbortRequest::class,
-        FCGI::END_REQUEST => FCGI\Record\EndRequest::class,
-        FCGI::PARAMS => FCGI\Record\Params::class,
-        FCGI::STDIN => FCGI\Record\Stdin::class,
-        FCGI::STDOUT => FCGI\Record\Stdout::class,
-        FCGI::STDERR => FCGI\Record\Stderr::class,
-        FCGI::DATA => FCGI\Record\Data::class,
-        FCGI::GET_VALUES => FCGI\Record\GetValues::class,
-        FCGI::GET_VALUES_RESULT => FCGI\Record\GetValuesResult::class,
-        FCGI::UNKNOWN_TYPE => FCGI\Record\UnknownType::class,
+        FCGI::BEGIN_REQUEST => Record\BeginRequest::class,
+        FCGI::ABORT_REQUEST => Record\AbortRequest::class,
+        FCGI::END_REQUEST => Record\EndRequest::class,
+        FCGI::PARAMS => Record\Params::class,
+        FCGI::STDIN => Record\Stdin::class,
+        FCGI::STDOUT => Record\Stdout::class,
+        FCGI::STDERR => Record\Stderr::class,
+        FCGI::DATA => Record\Data::class,
+        FCGI::GET_VALUES => Record\GetValues::class,
+        FCGI::GET_VALUES_RESULT => Record\GetValuesResult::class,
+        FCGI::UNKNOWN_TYPE => Record\UnknownType::class,
     ];
 
     /**
