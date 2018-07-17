@@ -3,12 +3,11 @@
 namespace SwooleGlue\Component\Swoole;
 
 
-use SwooleGlue\Component\Enviroment;
 use SwooleGlue\Component\Invoker;
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\Component\Pool\PoolManager;
 use SwooleGlue\Component\Protocol\FCGIHandler;
-use SwooleGlue\Component\Protocol\HttpHandler;
+use SwooleGlue\Component\Swoole\Http\HttpHandler;
 
 class SwooleServer {
 
@@ -151,6 +150,9 @@ class SwooleServer {
         //实例化对象池管理
         PoolManager::getInstance();
         $register->add($register::onWorkerStart, function (\swoole_server $server, int $workerId) {
+
+            return;
+            /* cclehui_todo
             PoolManager::getInstance()->__workerStartHook($workerId);
             $workerNum = ConfigUtil::getInstance()->getConf('MAIN_SERVER.SETTING.worker_num');
             $name = ConfigUtil::getInstance()->getConf('SERVER_NAME');
@@ -161,7 +163,7 @@ class SwooleServer {
                     $name = "{$name}_Task_Worker_" . $workerId;
                 }
                 cli_set_process_title($name);
-            }
+            }*/
         });
 
         //        EventHelper::registerDefaultOnTask($register);

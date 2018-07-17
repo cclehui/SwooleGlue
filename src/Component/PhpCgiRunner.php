@@ -4,6 +4,8 @@ namespace SwooleGlue\Component;
 
 
 //cgi 执行程序
+use SwooleGlue\Component\Http\Headers;
+
 class PhpCgiRunner {
 
     /**
@@ -11,6 +13,9 @@ class PhpCgiRunner {
      * @return string
      */
     public static function runPhp(): string {
+
+        //初始化header数据
+        Headers::init();
 
         ob_start();
 
@@ -24,23 +29,12 @@ class PhpCgiRunner {
         return $result;
     }
 
-    public static function getHttpHeadersStr(): string {
-
-        //http header处理  这里包含了cookie数据
-        $headers = headers_list();
-
-        $headers[] = 'Content-Type:text/html';
-        $headers[] = 'aaaaaaa:bbbbbbbbbbb';
-
-//        var_dump($headers);
-
-        $result = "";
-
-        if ($headers) {
-            foreach ($headers as $item) {
-                $result .= $item . "\r\n";
-            }
-        }
+    /**
+     * 获取http header信息
+     * @return string
+     */
+    public static function getHttpHeadersStr($fastcgi = false): string {
+        $result = Headers::getHeaderStr($fastcgi);
 
         return $result;
     }

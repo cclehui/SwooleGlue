@@ -7,8 +7,10 @@ class Headers {
     public static $http_protocol = 'HTTP/1.1';
     public static $http_status = 200;
 
-    public $head;
-    public $cookie;
+    public static $head = [];
+    public static $cookie = [];
+
+    public static $cacheByClass = true;//使用类来缓存header信息
 
     static $HTTP_HEADERS = array(
         100 => "100 Continue",
@@ -43,11 +45,24 @@ class Headers {
     );
 
     /**
+     * 在每次处理请求前需要初始化
+     */
+    public static function init() {
+        self::$http_status = 200;
+        self::$head = [];
+        self::$cookie= [];
+
+        if (strpos(php_sapi_name(), 'cli') === false) {
+            self::$cacheByClass = false;
+        }
+    }
+
+    /**
      * 设置Http状态
      * @param $code
      */
-    function setHttpStatus($code) {
-        $this->head[0] = self::$http_protocol . ' ' . self::$HTTP_HEADERS[$code];
+    public static function setHttpStatus($code) {
+        self::$head[0] = self::$http_protocol . ' ' . self::$HTTP_HEADERS[$code];
         self::$http_status = $code;
     }
 
@@ -56,8 +71,28 @@ class Headers {
      * @param $key
      * @param $value
      */
-    function setHeader($key, $value) {
-        $this->head[$key] = $value;
+    public static function setHeader($key, $value) {
+        self::$head[$key] = $value;
+    }
+
+    /**
+     * 设置header信息
+     * @param $headerStr
+     * @return bool|void
+     */
+    public static function header($headerStr) {
+        if (!$headerStr) {
+            return false;
+        }
+
+        if (self::$cacheByClass) {
+            list($key, $value) = explode(":", $headerStr, 2);
+            self::setHeader($key, $value);
+        } else {
+            return header($headerStr);
+        }
+
+        return true;
     }
 
     /**
@@ -70,7 +105,12 @@ class Headers {
      * @param null $secure
      * @param null $httponly
      */
-    function setcookie($name, $value = null, $expire = null, $path = '/', $domain = null, $secure = null, $httponly = null) {
+    public static function setcookie($name, $value = null, $expire = null, $path = '/', $domain = null, $secure = null, $httponly = null) {
+
+        if (!self::$cacheByClass) {
+            return setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+        }
+
         if ($value == null) {
             $value = 'deleted';
         }
@@ -90,51 +130,40 @@ class Headers {
         if ($httponly) {
             $cookie .= '; httponly';
         }
-        $this->cookie[] = $cookie;
+        self::$cookie[] = $cookie;
+
+        return true;
     }
 
-    /**
-     * 添加http header
-     * @param $header
-     */
-    function addHeaders(array $header) {
-        $this->head = array_merge($this->head, $header);
-    }
 
-    function getHeaderStr($fastcgi = false) {
-        $out = '';
+    public static function getHeaderStr($fastcgi = false) {
+
         if ($fastcgi) {
-            $out .= 'Status: ' . self::$http_status . ' ' . self::$HTTP_HEADERS[self::$http_status] . "\r\n";
+            $out = 'Status: ' . self::$http_status . ' ' . self::$HTTP_HEADERS[self::$http_status] . "\r\n";
 
         } else {
             //Protocol
-            if (isset($this->head[0])) {
-                $out .= $this->head[0] . "\r\n";
-                unset($this->head[0]);
-
-            } else {
-                $out = self::$http_protocol . " 200 OK\r\n";
-            }
+            $out = self::$http_protocol . ' ' . self::$HTTP_HEADERS[self::$http_status] . "\r\n";
         }
         //fill header
-//        if (!isset($this->head['Server'])) {
-//            $this->head['Server'] = 'Swoole';
+//        if (!isset(self::$head['Server'])) {
+//            self::$head['Server'] = 'Swoole';
 //        }
 
-//        if (!isset($this->head['Content-Type'])) {
-//            $this->head['Content-Type'] = 'text/html; charset=' . \Swoole::$charset;
+//        if (!isset(self::$head['Content-Type'])) {
+//            self::$head['Content-Type'] = 'text/html; charset=' . \Swoole::$charset;
 //        }
 //
-//        if (!isset($this->head['Content-Length'])) {
-//            $this->head['Content-Length'] = strlen($this->body);
+//        if (!isset(self::$head['Content-Length'])) {
+//            self::$head['Content-Length'] = strlen($this->body);
 //        }
         //Headers
-        foreach ($this->head as $k => $v) {
+        foreach (self::$head as $k => $v) {
             $out .= $k . ': ' . $v . "\r\n";
         }
         //Cookies
-        if ($this->cookie && is_array($this->cookie)) {
-            foreach ($this->cookie as $v) {
+        if (self::$cookie && is_array(self::$cookie)) {
+            foreach (self::$cookie as $v) {
                 $out .= "Set-Cookie: $v\r\n";
             }
         }
@@ -143,9 +172,9 @@ class Headers {
         return $out;
     }
 
-    function noCache() {
-        $this->head['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0';
-        $this->head['Pragma'] = 'no-cache';
+    public static function noCache() {
+        self::$head['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0';
+        self::$head['Pragma'] = 'no-cache';
     }
 
 }
