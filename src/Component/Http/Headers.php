@@ -75,6 +75,10 @@ class Headers {
         self::$head[$key] = $value;
     }
 
+    public static function getHeaders() {
+        return self::$head;
+    }
+
     /**
      * 设置header信息
      * @param $headerStr

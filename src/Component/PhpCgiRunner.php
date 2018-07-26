@@ -39,4 +39,8 @@ class PhpCgiRunner {
         return $result;
     }
 
+    public static function getHttpHeaders() {
+        return Headers::getHeaders();
+    }
+
 }

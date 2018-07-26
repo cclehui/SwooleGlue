@@ -7,7 +7,7 @@ use SwooleGlue\Component\Invoker;
 use SwooleGlue\Component\Config\ConfigUtil;
 use SwooleGlue\Component\Pool\PoolManager;
 use SwooleGlue\Component\Protocol\FCGIHandler;
-use SwooleGlue\Component\Swoole\Http\HttpHandler;
+use SwooleGlue\Component\Protocol\HttpHandler;
 
 class SwooleServer {
 

@@ -10,19 +10,7 @@ use SwooleGlue\Component\SysConst;
 
 class HttpHandler {
 
-
-    /*
-     * @var $reqeust \Swoole\Http\Request
-     */
-    protected $request;
-
-    /*
-     *  @var $response \Swoole\Http\Response
-     */
-    protected $response;
-
-    public function __construct(\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-
+    public function __construct() {
 
     }
 
@@ -33,22 +21,22 @@ class HttpHandler {
      * @param \Swoole\Http\Response $response
      */
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-        $_GET = $request->get ?: [];
-        $_POST = $request->post ?: [];
-        $_REQUEST = array_merge($_GET, $_POST);
-        $_SERVER = $request->server ?: [];
-        $_COOKIE = $request->cookie ?: [];
 
-        $this->request = $request;
-        $this->response = $response;
 
         try {
+            //初始化全局变量
+            $_GET = $request->get ?: [];
+            $_POST = $request->post ?: [];
+            $_REQUEST = array_merge($_GET, $_POST);
+            $_SERVER = $request->server ?: [];
+            $_COOKIE = $request->cookie ?: [];
 
             //执行处理
             $result = PhpCgiRunner::runPhp();
 
             //http header处理
-            $headers = headers_list();
+//            $headers = headers_list();
+            $headers = PhpCgiRunner::getHttpHeaders();
 
             if ($headers) {
                 foreach ($headers as $key => $value) {
@@ -59,10 +47,6 @@ class HttpHandler {
             if (!isset($headers['Content-Type'])) {
                 $response->header('Content-Type', 'text/html');
             }
-
-            //cookie处理
-            //cclehui_todo
-
 
             $response->write($result);
 
@@ -82,7 +66,7 @@ class HttpHandler {
             if ($handler instanceof ExceptionHandlerInterface) {
                 $handler->handle($throwable, $request, $response);
             } else {
-                $response->status(Status::CODE_INTERNAL_SERVER_ERROR);
+                $response->status(500);
                 $response->write(nl2br($throwable->getMessage() . "\n" . $throwable->getTraceAsString()));
             }
         }
