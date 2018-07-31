@@ -31,24 +31,20 @@ class HttpHandler {
             $_SERVER = $request->server ?: [];
             $_COOKIE = $request->cookie ?: [];
 
+            register_shutdown_function(function() use($response) {
+                $result = "";
+                if (PhpCgiRunner::$ob_started) {
+                    $result = ob_get_contents();
+                    ob_end_clean();
+                }
+
+                $this->sendReponse($response, $result);
+            });
+
             //执行处理
             $result = PhpCgiRunner::runPhp();
 
-            //http header处理
-//            $headers = headers_list();
-            $headers = PhpCgiRunner::getHttpHeaders();
-
-            if ($headers) {
-                foreach ($headers as $key => $value) {
-                    $response->header($key, $value);
-                }
-            }
-
-            if (!isset($headers['Content-Type'])) {
-                $response->header('Content-Type', 'text/html');
-            }
-
-            $response->write($result);
+            $this->sendReponse($response, $result);
 
 
         } catch (\Throwable $throwable) {
@@ -71,6 +67,24 @@ class HttpHandler {
             }
         }
 
+    }
+
+    protected function sendReponse($response, $result) {
+        //http header处理
+        //$headers = headers_list();
+        $headers = PhpCgiRunner::getHttpHeaders();
+
+        if ($headers) {
+            foreach ($headers as $key => $value) {
+                $response->header($key, $value);
+            }
+        }
+
+        if (!isset($headers['Content-Type'])) {
+            $response->header('Content-Type', 'text/html');
+        }
+
+        $response->write($result);
     }
 
 }

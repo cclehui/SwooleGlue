@@ -8,6 +8,8 @@ use SwooleGlue\Component\Http\Headers;
 
 class PhpCgiRunner {
 
+    public static $ob_started = false;
+
     /**
      * 执行php程序
      * @return string
@@ -17,7 +19,11 @@ class PhpCgiRunner {
         //初始化header数据
         Headers::init();
 
+        self::$ob_started = false;
+
         ob_start();
+
+        self::$ob_started = true;
 
 //        include \SwooleGlue\Component\Config\ConfigUtil::getInstance()->getConf(SysConst::ROOT_INDEX_FILE);
         Di::getInstance()->get(SysConst::PSERVERLET)->doRequest();

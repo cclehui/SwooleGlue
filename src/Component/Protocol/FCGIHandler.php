@@ -113,6 +113,23 @@ class FCGIHandler {
         try {
 
             $stdout = PhpCgiRunner::runPhp();
+
+            register_shutdown_function(function() use($response) {
+                $stdout = "";
+                if (PhpCgiRunner::$ob_started) {
+                    $stdout = ob_get_contents();
+                    ob_end_clean();
+                }
+
+                $headerStr = PhpCgiRunner::getHttpHeadersStr();
+
+                $result = $headerStr . "\r\n" . $stdout;
+
+                //发送结果
+                $response->sendStdoutResponse($result);
+            });
+
+
             $headerStr = PhpCgiRunner::getHttpHeadersStr();
 
             $result = $headerStr . "\r\n" . $stdout;
