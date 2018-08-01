@@ -112,8 +112,6 @@ class FCGIHandler {
 
         try {
 
-            $stdout = PhpCgiRunner::runPhp();
-
             register_shutdown_function(function() use($response) {
                 $stdout = "";
                 if (PhpCgiRunner::$ob_started) {
@@ -129,6 +127,7 @@ class FCGIHandler {
                 $response->sendStdoutResponse($result);
             });
 
+            $stdout = PhpCgiRunner::runPhp();
 
             $headerStr = PhpCgiRunner::getHttpHeadersStr();
 
